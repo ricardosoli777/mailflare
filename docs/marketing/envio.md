@@ -6,6 +6,10 @@
 - Antes de cada envio: consentimento, descadastro e bloqueio. Antes de cada lote: disjuntor, verificações do domínio, aquecimento, cota do SES e ritmo por provedor.
 - Disjuntor: com pelo menos 50 envios em 7 dias, pausa se devolução permanente ≥ 2% ou reclamação ≥ 0,08%, e avisa por e-mail quem salvou o remetente. Só volta quando alguém clica em retomar.
 
+- Se a AWS colocar a conta em revisão ou pausa (`EnforcementStatus` diferente de `HEALTHY`), nada é enviado.
+- Endereços de função (`abuse@`, `postmaster@`, `noc@`, `spam@`, `mailer-daemon@`, `noreply@`) são recusados no cadastro e na importação.
+- Com o segredo `CONFIG_ENCRYPTION_KEY`, a chave da AWS fica cifrada no banco.
+
 ## Configurar (Marketing → Envio)
 1. Salvar o remetente, em um subdomínio só de marketing.
 2. Cadastrar a chave da AWS no quadro **Conta Amazon SES**. A chave fica guardada no banco do MailLead e vale também para domínios que usem SES.
