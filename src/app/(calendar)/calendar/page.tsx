@@ -6,8 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { DragEvent, PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { AlignLeft, CalendarPlus2, Check, ChevronDown, ChevronLeft, ChevronRight, Clock3, MapPin, Palette, Bell, Plus, Repeat2, Trash2, UsersRound, X } from "@/components/icons";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { AlignLeft, ChevronDown, ChevronLeft, ChevronRight, Clock3, Download, MapPin, Palette, Bell, Plus, Repeat2, Search, Trash2, UsersRound, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,12 +24,17 @@ import { folderColorKeys } from "@/lib/folders/color-keys";
 import { useSelectedMailbox } from "@/components/mailbox-provider";
 import { DayEvents } from "./day-events";
 import { MonthGrid } from "./month-grid";
+import { CalendarList } from "./calendar-list";
+import { CalendarToolbar } from "./calendar-toolbar";
+import type { CalendarRangeMode } from "./calendar-toolbar-types";
+import { formatMinutes, freeMinutes, openRangesForDay, visibleHours } from "./open-hours-utils";
+import type { OpenHoursSource } from "./open-hours-types";
 import { CalendarSubscribeDialog } from "./subscribe-dialog";
 import { InviteResponseDialog } from "./invite-response-dialog";
 import type { CalendarEvent, CalendarView, EventDragPreview, EventResizeEdge, EventResizeSession } from "./types";
 import {
   addDays, addMonths, calendarAnchorDay, CALENDAR_END_HOUR, CALENDAR_HOUR_HEIGHT, CALENDAR_START_HOUR,
-  currentTimePosition, isPendingInvite, dateKey, defaultCalendarStart, dropStartForPosition, EVENT_COLOR_CLASSES, eventEndAfterMinutes, eventPosition, expandCalendarEvents,
+  currentTimePosition, formatDayRange, GRID_WEEKDAYS, isPendingInvite, dateKey, defaultCalendarStart, dropStartForPosition, EVENT_COLOR_CLASSES, eventEndAfterMinutes, eventPosition, expandCalendarEvents,
   formatEventRange, formatHour, formatLocalDateTime, toCalendarOverrides,
   monthGridDates, PAST_EVENT_COLOR_CLASSES, rescheduleCalendarOccurrence, resizeEventTimes, startOfDay, startOfMonth, startOfWeek, WEEKDAY_OPTIONS,
   type CalendarOccurrenceOverride, type CalendarOccurrenceResponse, type CalendarOverridesInput,
@@ -56,7 +60,7 @@ export default function CalendarPage() {
   const [view, setView] = useState<CalendarView>(() => {
     try {
       const saved = window.localStorage.getItem("mailflare.calendar.view");
-      if (saved === "month" || saved === "week" || saved === "day") return saved;
+      if (saved === "month" || saved === "week" || saved === "day" || saved === "list") return saved;
     } catch { /* storage can be blocked; the default view is fine */ }
     return "week";
   });
@@ -66,6 +70,22 @@ export default function CalendarPage() {
     try { window.localStorage.setItem("mailflare.calendar.view", next); } catch { /* not remembered */ }
   }
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [bookingTypes, setBookingTypes] = useState<OpenHoursSource[]>([]);
+  const [showEvents, setShowEvents] = useState(true);
+  const [showOpenHours, setShowOpenHours] = useState(true);
+  const [rangeMode, setRangeMode] = useState<CalendarRangeMode>(() => {
+    try {
+      const saved = window.localStorage.getItem("mailflare.calendar.range");
+      if (saved === "business" || saved === "full") return saved;
+    } catch { /* storage can be blocked; the default range is fine */ }
+    return "open";
+  });
+  function chooseRange(next: CalendarRangeMode) {
+    setRangeMode(next);
+    try { window.localStorage.setItem("mailflare.calendar.range", next); } catch { /* not remembered */ }
+  }
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const [pickerMonth, setPickerMonth] = useState(() => new Date());
   const monthPickerRef = useRef<HTMLDivElement | null>(null);
@@ -151,6 +171,65 @@ export default function CalendarPage() {
     return () => window.clearInterval(interval);
   }, []);
 
+  const hasOpenHours = bookingTypes.some((type) => type.enabled);
+  const query = search.trim().toLowerCase();
+  const shownEvents = useMemo(() => !showEvents ? [] : !query ? events
+    : events.filter((event) => [event.title, event.location, event.description].some((value) => value?.toLowerCase().includes(query))), [events, showEvents, query]);
+  // A day or longer goes to the "all day" row; the hour grid keeps the rest.
+  const timedEvents = useMemo(() => shownEvents.filter((event) => new Date(event.endsAt).getTime() - new Date(event.startsAt).getTime() < 86_400_000), [shownEvents]);
+  const longEvents = useMemo(() => shownEvents.filter((event) => new Date(event.endsAt).getTime() - new Date(event.startsAt).getTime() >= 86_400_000), [shownEvents]);
+  const openByDay = useMemo(() => new Map(days.map((day) => [dateKey(day), openRangesForDay(bookingTypes, day, addDays(day, 1), getUserTimeZone())])), [days, bookingTypes]);
+  // The days the summary counts: what the grid shows, or the whole month.
+  const summaryDays = useMemo(() => {
+    if (view === "day" || view === "week") return days;
+    const first = view === "list" ? startOfDay(visibleDate) : startOfMonth(visibleDate);
+    const last = addMonths(startOfMonth(visibleDate), 1);
+    const list: Date[] = [];
+    for (let day = first; day < last; day = addDays(day, 1)) list.push(day);
+    return list;
+  }, [view, days, visibleDate]);
+  const summary = useMemo(() => {
+    const first = summaryDays[0];
+    const end = addDays(summaryDays[summaryDays.length - 1], 1);
+    const inRange = events.filter((event) => new Date(event.startsAt) < end && new Date(event.endsAt) > first);
+    let free = 0;
+    for (const day of summaryDays) {
+      const next = addDays(day, 1);
+      if (next.getTime() <= currentTime) continue;
+      const open = openRangesForDay(bookingTypes, day, next, getUserTimeZone());
+      if (!open.length) continue;
+      const minutes = (value: number) => Math.max(0, Math.min(24 * 60, (value - day.getTime()) / 60_000));
+      const busyTime = inRange.filter((event) => !isPendingInvite(event)).map((event) => ({ start: minutes(new Date(event.startsAt).getTime()), end: minutes(new Date(event.endsAt).getTime()) }));
+      free += freeMinutes(open, busyTime, minutes(currentTime));
+    }
+    return { events: inRange.length, free };
+  }, [summaryDays, events, bookingTypes, currentTime]);
+  const effectiveRange: CalendarRangeMode = rangeMode === "open" && !hasOpenHours ? "business" : rangeMode;
+  const hours = useMemo(() => {
+    if (effectiveRange === "full") return { start: 0, end: 24 };
+    const windows = effectiveRange === "business" ? { start: 8, end: 18 } : visibleHours([...openByDay.values()].flat(), 2);
+    // Events outside the window widen it, so none is hidden.
+    const eventWindows = days.flatMap((day) => timedEvents.flatMap((event) => {
+      const position = eventPosition(event, day);
+      if (!position) return [];
+      const start = position.top * 60 / CALENDAR_HOUR_HEIGHT;
+      return [{ start, end: start + position.height * 60 / CALENDAR_HOUR_HEIGHT }];
+    }));
+    if (!eventWindows.length) return windows;
+    const covered = visibleHours(eventWindows, 0);
+    return { start: Math.min(windows.start, covered.start), end: Math.max(windows.end, covered.end) };
+  }, [effectiveRange, openByDay, days, timedEvents]);
+
+  useEffect(() => {
+    let active = true;
+    // Open hours come from the booking types; without them the grid simply shows none.
+    void authFetch("/api/booking")
+      .then(async (response) => response.ok ? ((await response.json()) as { events?: OpenHoursSource[] }).events ?? [] : [])
+      .then((list) => { if (active) setBookingTypes(list); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+
   useEffect(() => {
     if (!monthPickerOpen) return;
     const closeOnOutsidePointer = (event: PointerEvent) => {
@@ -179,7 +258,7 @@ export default function CalendarPage() {
     let active = true;
     const monthDates = view === "month" ? monthGridDates(visibleDate) : null;
     const start = new Date(Math.min(today.getTime(), weekStart.getTime(), startOfDay(visibleDate).getTime(), monthDates?.[0].getTime() ?? Infinity));
-    const end = new Date(Math.max(addDays(today, 90).getTime(), addDays(weekStart, 7).getTime(), addDays(visibleDate, 1).getTime(), monthDates ? addDays(monthDates[41], 1).getTime() : 0));
+    const end = new Date(Math.max(addDays(today, 90).getTime(), view === "list" ? addDays(visibleDate, 90).getTime() : 0, addDays(weekStart, 7).getTime(), addDays(visibleDate, 1).getTime(), monthDates ? addDays(monthDates[41], 1).getTime() : 0));
     void authFetch(`/api/calendar/events?start=${start.toISOString()}&end=${end.toISOString()}`)
       .then((response) => {
         if (!response.ok) throw new Error(t("calendar.loadFailed"));
@@ -470,16 +549,34 @@ export default function CalendarPage() {
       <Toaster position="bottom-left" />
       {loading && <RouteLoadingBarPortal />}
       {headerTarget && createPortal(
-        <div className="flex min-w-0 flex-1 items-center justify-between gap-3 ">
-          <div className="flex shrink-0 items-center gap-2">
+        <>
+          {searchOpen && <input autoFocus type="search" value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === "Escape") { setSearch(""); setSearchOpen(false); } }}
+            placeholder={t("calendar.search")} aria-label={t("calendar.search")} className="h-10 min-w-0 max-w-64 flex-1 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900 outline-none focus:border-blue-600" />}
+          <button type="button" aria-label={t("calendar.search")} aria-expanded={searchOpen} onClick={() => { setSearch(""); setSearchOpen((open) => !open); }} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-neutral-600 hover:bg-neutral-100"><Search className="h-5 w-5" /></button>
+          <button type="button" aria-label={t("calendar.subscribe")} title={t("calendar.subscribe")} onClick={() => setSubscribeOpen(true)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-neutral-600 hover:bg-neutral-100"><Download className="h-5 w-5" /></button>
+          <Button disabled={pendingAction !== null} onClick={() => openNewEvent()} className="h-10 shrink-0 rounded-lg bg-blue-600 px-4 text-white hover:bg-blue-500"><Plus className="h-5 w-5" />{t("calendar.newEvent")}</Button>
+        </>,
+        headerTarget,
+      )}
+
+      <section aria-busy={loading} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain">
+          <div className="sticky left-0">
+            <CalendarToolbar view={view} onView={chooseView} eventCount={summary.events} freeTime={formatMinutes(summary.free)} hasOpenHours={hasOpenHours}
+              showEvents={showEvents} showOpenHours={showOpenHours} onToggleEvents={() => setShowEvents((value) => !value)} onToggleOpenHours={() => setShowOpenHours((value) => !value)}
+              range={effectiveRange} onRange={chooseRange}
+              onPrevious={() => setVisibleDate(view === "month" || view === "list" ? addMonths(visibleDate, -1) : addDays(visibleDate, view === "week" ? -7 : -1))}
+              onNext={() => setVisibleDate(view === "month" || view === "list" ? addMonths(visibleDate, 1) : addDays(visibleDate, view === "week" ? 7 : 1))}
+              onToday={() => setVisibleDate(new Date())}
+              title={
           <div ref={monthPickerRef} className="relative shrink-0">
             <button type="button" onClick={(event) => {
               const rect = event.currentTarget.getBoundingClientRect();
               setMonthPickerPos({ top: rect.bottom + 12, left: Math.max(12, Math.min(rect.left, window.innerWidth - 460)) });
               setPickerMonth(startOfMonth(visibleDate));
               setMonthPickerOpen((open) => !open);
-            }} className="flex items-center gap-2 whitespace-nowrap text-sm font-medium text-neutral-700" aria-haspopup="dialog" aria-expanded={monthPickerOpen}>
-              {formatUserDate(visibleDate, { month: "long", year: "numeric" })}
+            }} className="flex max-w-full items-center gap-2 text-left text-lg font-semibold text-neutral-900" aria-haspopup="dialog" aria-expanded={monthPickerOpen}>
+              {view === "week" ? formatDayRange(days[0], days[6]) : view === "day" ? formatUserDate(visibleDate, { dateStyle: "long" }) : formatUserDate(visibleDate, { month: "long", year: "numeric" })}
               <ChevronDown className="h-5 w-5 text-neutral-500" />
             </button>
             {monthPickerOpen && monthPickerPos && createPortal(
@@ -498,7 +595,7 @@ export default function CalendarPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-7">
-                  {([0, 1, 2, 3, 4, 5, 6] as const).map((weekday) => (
+                  {GRID_WEEKDAYS.map((weekday) => (
                     <span key={weekday} aria-label={t(`weekday.${weekday}`)} className="flex h-10 items-center justify-center text-sm font-medium text-neutral-500">{t(`weekday.${weekday}`).charAt(0).toUpperCase()}</span>
                   ))}
                   {pickerDates.map((day) => {
@@ -519,58 +616,46 @@ export default function CalendarPage() {
               document.body,
             )}
           </div>
+              } />
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <button type="button" aria-label={t(`calendar.previousView.${view}`)} onClick={() => setVisibleDate(view === "month" ? addMonths(visibleDate, -1) : addDays(visibleDate, view === "week" ? -7 : -1))} className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-neutral-600 hover:bg-neutral-50"><ChevronLeft className="h-5 w-5" /></button>
-            <button type="button" aria-label={t(`calendar.nextView.${view}`)} onClick={() => setVisibleDate(view === "month" ? addMonths(visibleDate, 1) : addDays(visibleDate, view === "week" ? 7 : 1))} className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-neutral-600 hover:bg-neutral-50"><ChevronRight className="h-5 w-5" /></button>
-            <button type="button" onClick={() => setVisibleDate(new Date())} className="h-10 rounded-full max-md:hidden bg-white px-4 text-sm font-medium text-neutral-700 hover:bg-neutral-50">{t("calendar.today")}</button>
-            <div className="ml-1 flex items-center max-md:ml-0">
-              <Button disabled={pendingAction !== null} onClick={() => openNewEvent()} className={clsx("h-10 rounded-l-full rounded-r-none bg-blue-600 pl-4 pr-3 text-white hover:bg-blue-500")}><Plus className="h-5 w-5" />{t("calendar.newEvent")}</Button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <button type="button" aria-label={t("calendar.options")} className="flex h-10 w-9 items-center justify-center rounded-l-none rounded-r-full border-l border-white/40 bg-blue-600 text-white hover:bg-blue-500"><ChevronDown className="h-5 w-5" /></button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content align="end" sideOffset={4} className="z-[130] min-w-48 rounded-xl border border-neutral-200 bg-white p-1 text-sm shadow-xl">
-                    <DropdownMenu.Item onSelect={() => setVisibleDate(new Date())} className="cursor-pointer rounded-lg px-3 py-2 text-neutral-700 outline-none data-[highlighted]:bg-neutral-100 md:hidden">{t("calendar.today")}</DropdownMenu.Item>
-                    <DropdownMenu.Item onSelect={() => setSubscribeOpen(true)} className="cursor-pointer rounded-lg px-3 py-2 text-neutral-700 outline-none data-[highlighted]:bg-neutral-100">{t("calendar.subscribe")}</DropdownMenu.Item>
-                    <DropdownMenu.Separator className="my-1 h-px bg-neutral-100" />
-                    <DropdownMenu.Label className="px-3 pb-1 pt-2 text-xs font-medium text-neutral-500">{t("calendar.view")}</DropdownMenu.Label>
-                    {(["month", "week", "day"] as const).map((option) => <DropdownMenu.Item key={option} onSelect={() => chooseView(option)} className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-neutral-700 outline-none data-[highlighted]:bg-neutral-100"><span className="flex h-4 w-4 shrink-0 items-center justify-center">{view === option && <Check className="h-4 w-4 text-blue-600" />}</span>{t(`calendar.${option}`)}</DropdownMenu.Item>)}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
-            </div>
-          </div>
-        </div>,
-        headerTarget,
-      )}
-      <section aria-busy={loading} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        <div className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain">
-          {view === "month" ? (
-            <MonthGrid month={visibleDate} today={today} events={events} currentTime={currentTime}
+          {view === "list" ? (
+            <CalendarList events={shownEvents} from={startOfDay(visibleDate)} onEdit={onEditEvent} />
+          ) : view === "month" ? (
+            <MonthGrid month={visibleDate} today={today} events={shownEvents} currentTime={currentTime}
               onSelectDay={(day) => openNewEvent(day)} onOpenDay={(day) => { setVisibleDate(day); setView("day"); }} onEdit={onEditEvent} />
           ) : (
-          <div className={clsx("w-full", view === "week" ? "min-w-190" : "min-w-90")}>
-            <div className="sticky top-0 z-30 grid h-14 border-b border-neutral-200 bg-white" style={{ gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))` }}>
-              <div />
-              {days.map((day) => (
-                <div key={dateKey(day)} className={`border-l border-neutral-100 px-3 py-2 text-xs ${dateKey(day) === dateKey(today) ? "text-blue-700" : "text-neutral-700"}`}>
-                  {formatUserDate(day, { weekday: "short" })}
-                  <span className="text-2xl block font-medium">
-                    {formatUserDate(day, { day: "numeric" })}
-                  </span>
-                </div>
-              ))}
+          <div className="px-4 pb-4 md:px-6">
+          <div className={clsx("w-full border border-neutral-200", view === "week" ? "min-w-190" : "min-w-90")}>
+            <div className="sticky top-0 z-30 border-b border-neutral-200 bg-white">
+              <div className="grid border-b border-neutral-200" style={{ gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))` }}>
+                <div />
+                {days.map((day) => (
+                  <div key={dateKey(day)} className={clsx("border-l border-neutral-200 px-1 py-2 text-center text-sm font-semibold", dateKey(day) === dateKey(today) ? "text-blue-700" : "text-neutral-900")}>
+                    {formatUserDate(day, { weekday: "short" })} {formatUserDate(day, { day: "2-digit", month: "2-digit" })}
+                    {hasOpenHours && !openByDay.get(dateKey(day))?.length && <span className="block text-xs font-normal text-neutral-500">{t("calendar.closed")}</span>}
+                  </div>
+                ))}
+              </div>
+              <div className="grid min-h-9" style={{ gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))` }}>
+                <div className="flex items-center justify-center px-1 text-center text-xs text-neutral-600">{t("calendar.allDay")}</div>
+                {days.map((day) => (
+                  <div key={dateKey(day)} className="min-w-0 space-y-0.5 border-l border-neutral-200 p-0.5">
+                    {longEvents.filter((event) => new Date(event.startsAt) < addDays(day, 1) && new Date(event.endsAt) > day).map((event) => (
+                      <button key={event.id} type="button" onClick={() => onEditEvent(event)} title={event.title} className={clsx("block w-full truncate rounded px-1.5 py-0.5 text-left text-[11px] font-medium", EVENT_COLOR_CLASSES[normalizeCalendarColor(event.color)])}>{event.title}</button>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          <div className="grid" style={{ gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))`, height: (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * CALENDAR_HOUR_HEIGHT }}>
+          <div className="overflow-hidden" style={{ height: (hours.end - hours.start) * CALENDAR_HOUR_HEIGHT }}>
+          <div className="grid" style={{ gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))`, height: (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * CALENDAR_HOUR_HEIGHT, marginTop: -hours.start * CALENDAR_HOUR_HEIGHT }}>
             <div className="relative">
               {Array.from({ length: CALENDAR_END_HOUR - CALENDAR_START_HOUR }, (_, index) => (
-                <span key={index} className={`absolute right-3 text-xs text-neutral-700 ${index === 0 ? "" : "-translate-y-1/2"}`} style={{ top: index * CALENDAR_HOUR_HEIGHT }}>{index % 2 == 0 ? null : formatHour(CALENDAR_START_HOUR + index)}</span>
+                <span key={index} className="absolute inset-x-0 border-t border-neutral-200 pt-0.5 text-center text-xs text-neutral-700" style={{ top: index * CALENDAR_HOUR_HEIGHT, height: CALENDAR_HOUR_HEIGHT }}>{formatHour(CALENDAR_START_HOUR + index)}</span>
               ))}
             </div>
             {days.map((day) => (
-              <div key={dateKey(day)} className={"relative border-l border-neutral-100"}
+              <div key={dateKey(day)} className={clsx("relative border-l border-neutral-200", hasOpenHours && !openByDay.get(dateKey(day))?.length && "bg-neutral-50")}
                 onDragOver={(event) => {
                   if (!draggedEvent) return;
                   event.preventDefault();
@@ -584,9 +669,12 @@ export default function CalendarPage() {
                   event.preventDefault();
                   if (draggedEvent) void moveEvent(draggedEvent, day, event.clientY - event.currentTarget.getBoundingClientRect().top - dragOffsetPixels.current);
                 }}
-                style={{ backgroundImage: "linear-gradient(to bottom, transparent calc(100% - 1px), var(--color-neutral-100) calc(100% - 1px))", backgroundSize: `100% ${CALENDAR_HOUR_HEIGHT}px` }}>
+                style={{ backgroundImage: "linear-gradient(to bottom, var(--color-neutral-200) 1px, transparent 1px), linear-gradient(to bottom, var(--color-neutral-100) 1px, transparent 1px)", backgroundSize: `100% ${CALENDAR_HOUR_HEIGHT}px, 100% ${CALENDAR_HOUR_HEIGHT / 2}px` }}>
+                {showOpenHours && openByDay.get(dateKey(day))?.map((open) => (
+                  <div key={open.start} aria-hidden="true" className="pointer-events-none absolute inset-x-0 bg-green-500/10" style={{ top: open.start * CALENDAR_HOUR_HEIGHT / 60, height: (open.end - open.start) * CALENDAR_HOUR_HEIGHT / 60 }} />
+                ))}
                 <button type="button" aria-label={t("calendar.addEventOn", { date: formatUserDate(day, { dateStyle: "short" }) })} onClick={(event) => openNewEvent(day, dropStartForPosition(day, event.nativeEvent.offsetY))} className="absolute inset-0 z-0 cursor-crosshair" />
-                <DayEvents day={day} events={events} currentTime={currentTime} busy={busy} activeEventId={activeEventId}
+                <DayEvents day={day} events={timedEvents} currentTime={currentTime} busy={busy} activeEventId={activeEventId}
                   onEdit={onEditEvent} onDragStart={onEventDragStart} onDragEnd={onEventDragEnd}
                   onResizeStart={onResizeStart} onResizeMove={onResizeMove} onResizeEnd={onResizeEnd} onResizeCancel={onResizeCancel} />
                 {dragPreview && previewEvent && previewPosition && dateKey(dragPreview.day) === dateKey(day) && (
@@ -599,14 +687,17 @@ export default function CalendarPage() {
                   </div>
                 )}
                 {dateKey(day) === dateKey(now) && (
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 z-30" style={{ top: currentTimePosition(now) }}>
-                    <div className="h-1 w-full bg-blue-600" />
-                    <div className="absolute -left-2.5 -top-2 h-5 w-5 rounded-full bg-blue-600" />
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 z-20" style={{ top: currentTimePosition(now) }}>
+                    <div className="h-0.5 w-full bg-red-500" />
+                    <div className="absolute -left-1 -top-[3px] h-2 w-2 rounded-full bg-red-500" />
                   </div>
                 )}
               </div>
             ))}
           </div>
+          </div>
+          </div>
+          {effectiveRange !== "full" && <p className="mt-3 flex flex-wrap items-center gap-3 text-sm text-neutral-500">{t("calendar.range.note")}<button type="button" onClick={() => chooseRange("full")} className="font-medium text-blue-700 hover:underline">{t("calendar.range.showFull")}</button></p>}
           </div>
           )}
         </div>

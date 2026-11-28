@@ -56,7 +56,7 @@ export function CalendarMenu() {
 	return (
 		<div className="flex h-full min-h-0 flex-col px-3 pb-3 pt-3">
 			<SidebarHeader href="/inbox" />
-			<nav aria-label={t("calendar.sections")} className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain">
+			<nav aria-label={t("calendar.sections")} className="-mx-3 min-h-0 flex-1 px-3 space-y-1 overflow-y-auto overscroll-contain">
 				{heading(t("calendar.menu.scheduling"))}
 				<MenuItem href="/booking" label={t("calendar.menu.bookingTypes")} icon={Link2} minimal={minimal} />
 				<MenuItem href="/calendar" label={t("calendar.calendar")} icon={CalendarDays} minimal={minimal} />

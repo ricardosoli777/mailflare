@@ -36,7 +36,7 @@ Se a mesma tarefa falhar três voltas no ciclo, parar e levar o problema ao dono
 ### Onda 2: visual novo (R2, R3, R4.1, R13.1)
 - [x] 2.1 Desenho das telas: o dono decidiu seguir as capturas de referência, sem rodada de desenho próprio
 - [x] 2.1b Moldura nova: menu lateral, painel com cabeçalho, sai a coluna de próximos eventos
-- [ ] 2.2 Calendário: disponíveis pintados, faixa útil, dias fechados, lista, resumo
+- [x] 2.2 Calendário: disponíveis pintados, faixa de horas, dias fechados, linha de dia todo, lista, resumo, busca, semana começando na segunda (o aviso de conectar agenda externa entra na onda 6)
 - [ ] 2.3 Vários calendários
 - [x] 2.4 Cartões de tipos de reunião (busca, Todos/Ativos/Inativos, interruptor, link, abrir, compartilhar, duplicar)
 - [ ] 2.5 Página pública com mês e horários lado a lado

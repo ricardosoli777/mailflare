@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useLanguage } from "@/components/language-provider";
 import { normalizeCalendarColor } from "@/lib/calendar/colors";
 import { formatUserDate } from "@/lib/time/utils";
-import { addDays, dateKey, EVENT_COLOR_CLASSES, formatEventRange, isPendingInvite, monthGridDates, PAST_EVENT_COLOR_CLASSES, PENDING_EVENT_CLASSES } from "./utils";
+import { addDays, dateKey, EVENT_COLOR_CLASSES, formatEventRange, GRID_WEEKDAYS, isPendingInvite, monthGridDates, PAST_EVENT_COLOR_CLASSES, PENDING_EVENT_CLASSES } from "./utils";
 import type { CalendarEvent } from "./types";
 
 const MAX_VISIBLE = 3;
@@ -40,7 +40,7 @@ export function MonthGrid({ month, today, events, currentTime, onSelectDay, onOp
 	return (
 		<div className="flex min-h-full min-w-[640px] flex-col">
 			<div className="sticky top-0 z-30 grid grid-cols-7 border-b border-neutral-200 bg-white">
-				{([0, 1, 2, 3, 4, 5, 6] as const).map((weekday) => (
+				{GRID_WEEKDAYS.map((weekday) => (
 					<span key={weekday} className="px-2 py-2 text-xs font-medium text-neutral-600">{t(`calendar.weekdayShort.${weekday}`)}</span>
 				))}
 			</div>

@@ -7,7 +7,9 @@ import { dateFromZonedFields, formatUserDate, getDisplayLocale, formatUserDateTi
 
 export const CALENDAR_START_HOUR = 0;
 export const CALENDAR_END_HOUR = 24;
-export const CALENDAR_HOUR_HEIGHT = 36;
+export const CALENDAR_HOUR_HEIGHT = 48;
+/** Weekdays in the order the grids show them (0 is Sunday). */
+export const GRID_WEEKDAYS = [1, 2, 3, 4, 5, 6, 0] as const;
 export const UPCOMING_BATCH_SIZE = 14;
 export const WEEKDAY_OPTIONS = [
   { value: 0, label: "Sun" }, { value: 1, label: "Mon" }, { value: 2, label: "Tue" },
@@ -270,12 +272,12 @@ export function defaultCalendarStart(day: Date): Date {
 
 export function monthGridDates(month: Date): Date[] {
   const first = startOfMonth(month);
-  const gridStart = addDays(first, -zonedDateFields(first, getUserTimeZone()).getUTCDay());
+  const gridStart = addDays(first, -((zonedDateFields(first, getUserTimeZone()).getUTCDay() + 6) % 7));
   return Array.from({ length: 42 }, (_, index) => addDays(gridStart, index));
 }
 
 export function startOfWeek(value: Date): Date {
-  return addDays(startOfDay(value), -zonedDateFields(value, getUserTimeZone()).getUTCDay());
+  return addDays(startOfDay(value), -((zonedDateFields(value, getUserTimeZone()).getUTCDay() + 6) % 7));
 }
 
 export function dateKey(value: Date): string {
@@ -298,7 +300,12 @@ export function currentTimePosition(value: Date): number {
 }
 
 export function formatHour(hour: number): string {
-  return new Date(2026, 0, 1, hour).toLocaleTimeString(getDisplayLocale(), { hour: "numeric" });
+  return new Date(2026, 0, 1, hour).toLocaleTimeString(getDisplayLocale(), { hour: "2-digit", minute: "2-digit" });
+}
+
+/** "23 – 29 de nov. de 2026", in the viewer's language and time zone. */
+export function formatDayRange(first: Date, last: Date): string {
+  return new Intl.DateTimeFormat(getDisplayLocale(), { day: "numeric", month: "short", year: "numeric", timeZone: getUserTimeZone() }).formatRange(first, last);
 }
 
 export function formatEventTime(value: Date): string {
