@@ -19,8 +19,6 @@ type TurnstileWindow = Window & {
 	};
 };
 
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-
 function loadTurnstileScript(): Promise<void> {
 	const existing = document.querySelector<HTMLScriptElement>("script[data-turnstile]");
 	if (existing) {
@@ -52,9 +50,11 @@ function loadTurnstileScript(): Promise<void> {
 }
 
 export function TurnstileField({
+	siteKey,
 	name = "turnstileToken",
 	resetSignal,
 }: {
+	siteKey?: string;
 	name?: string;
 	resetSignal?: number;
 }) {
@@ -63,7 +63,7 @@ export function TurnstileField({
 	const [token, setToken] = useState("");
 
 	useEffect(() => {
-		if (!TURNSTILE_SITE_KEY || !containerRef.current) return;
+		if (!siteKey || !containerRef.current) return;
 		let cancelled = false;
 
 		void loadTurnstileScript().then(() => {
@@ -71,7 +71,7 @@ export function TurnstileField({
 			const turnstile = (window as TurnstileWindow).turnstile;
 			if (!turnstile || widgetId.current) return;
 			widgetId.current = turnstile.render(containerRef.current, {
-				sitekey: TURNSTILE_SITE_KEY,
+				sitekey: siteKey,
 				callback: setToken,
 				"expired-callback": () => setToken(""),
 				"error-callback": () => setToken(""),
@@ -86,7 +86,7 @@ export function TurnstileField({
 			if (turnstile && widgetId.current) turnstile.remove(widgetId.current);
 			widgetId.current = undefined;
 		};
-	}, []);
+	}, [siteKey]);
 
 	useEffect(() => {
 		if (!resetSignal || !widgetId.current) return;
@@ -94,7 +94,7 @@ export function TurnstileField({
 		setToken("");
 	}, [resetSignal]);
 
-	if (!TURNSTILE_SITE_KEY) return null;
+	if (!siteKey) return null;
 
 	return (
 		<div className="space-y-2">

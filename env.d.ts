@@ -74,6 +74,8 @@ interface CloudflareEnv {
 	CF_API_KEY?: string;
 	CF_EMAIL?: string;
 	TURNSTILE_SECRET_KEY?: string;
+	/** Public Turnstile widget key. */
+	TURNSTILE_SITE_KEY?: string;
 	/** Seals secrets stored in the database (AWS credentials). Losing it means entering them again. */
 	CONFIG_ENCRYPTION_KEY?: string;
 	GITHUB_UPDATE_TOKEN?: string;

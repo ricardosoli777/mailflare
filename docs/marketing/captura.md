@@ -15,7 +15,7 @@ Tudo em **Marketing → Captura**. Os contatos entram na lista escolhida, com o 
 - Quem tinha saído e confirma um pedido novo volta, só para a lista do formulário. Endereço com devolução permanente ou reclamação não volta.
 
 ## Proteção contra robôs
-Campo escondido, limite por IP e, quando `TURNSTILE_SECRET_KEY` e `NEXT_PUBLIC_TURNSTILE_SITE_KEY` existem, o Turnstile. Com Turnstile ligado, quem envia pelo código colado em outro site termina o cadastro na página do MailLead, onde está a verificação.
+Campo escondido, limite por IP e, quando `TURNSTILE_SECRET_KEY` e `TURNSTILE_SITE_KEY` existem, o Turnstile. Com Turnstile ligado, quem envia pelo código colado em outro site termina o cadastro na página do MailLead, onde está a verificação.
 
 ## API
 Chaves próprias do marketing (`mk_…`), mostradas uma única vez. Não dão acesso ao e-mail.

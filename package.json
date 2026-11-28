@@ -36,9 +36,9 @@
         "description": "Runtime Cloudflare API token used by Mailflare onboarding to call the Zones, DNS, and Email Routing APIs. Cloudflare's deploy/build token is not passed to the app, so create this separately at https://dash.cloudflare.com/profile/api-tokens with `Zone Read`, `DNS Edit`, `Email Routing Edit`, and `Email Routing Rules Write` permissions for the zones you will connect. Add `Email Sending Edit` to enable outbound mail. Paste only the token secret value, without `Bearer`."
       },
       "TURNSTILE_SECRET_KEY": {
-        "description": "Cloudflare Turnstile secret key used to verify login and first-run registration challenges. Pair with NEXT_PUBLIC_TURNSTILE_SITE_KEY at build time."
+        "description": "Cloudflare Turnstile secret key used to verify login and first-run registration challenges. Pair with TURNSTILE_SITE_KEY."
       },
-      "NEXT_PUBLIC_TURNSTILE_SITE_KEY": {
+      "TURNSTILE_SITE_KEY": {
         "description": "Cloudflare Turnstile public site key used by the login and first-run registration widgets."
       },
       "CF_EMAIL_WORKER_NAME": {

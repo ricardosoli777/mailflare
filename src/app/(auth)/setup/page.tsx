@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { SESSION_COOKIE, getUserFromSession } from "@/lib/auth/session";
 import { hasAdminAccount } from "@/lib/auth/setup";
+import { turnstileSiteKey } from "@/lib/auth/turnstile";
 import { getEnv } from "@/lib/cloudflare";
 import { getPrimaryDomain } from "@/lib/user";
 import { OnboardingClient } from "@/app/(auth)/onboarding/onboarding-client";
@@ -20,7 +21,7 @@ export default async function SetupPage() {
 		if (user && !user.disabled) redirect("/inbox");
 		return (
 			<AuthGuard mode="public">
-				<RegisterClient />
+				<RegisterClient turnstileSiteKey={turnstileSiteKey(env)} />
 			</AuthGuard>
 		);
 	}

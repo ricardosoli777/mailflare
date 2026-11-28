@@ -60,10 +60,8 @@ failed migration stops the start (the container exits with an error in
 image after one has been applied, pin an older `sha-` tag and restore the
 volume or backup taken in step 1.
 
-Turnstile is not in the prebuilt image: its site key is fixed at build time.
-To use it, build from source with
-`docker build --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=<key> .` (or set the
-arg under `build:` in `docker-compose.yml`) and set `TURNSTILE_SECRET_KEY`.
+To use Turnstile, set `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` in the
+container environment.
 
 ### PWA and push notifications
 
@@ -158,7 +156,8 @@ and the DNS page shows what to set by hand.
 | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` | unset | Amazon SES credentials, used when none are saved in the app |
 | `INBOUND_WEBHOOK_SECRET` | unset | Enables `/api/inbound` for the relay Worker |
 | `INBOUND_REQUIRE_SIGNED_HEADERS` | unset | Set to `1` once the relay Worker is updated: refuses relays that do not sign the header map with a timestamp (older relays stay accepted without it, and their requests can be replayed) |
-| `TURNSTILE_SECRET_KEY` | unset | Bot protection on login and reset forms (`NEXT_PUBLIC_TURNSTILE_SITE_KEY` at build time) |
+| `TURNSTILE_SECRET_KEY` | unset | Bot protection on login and reset forms (needs `TURNSTILE_SITE_KEY` too) |
+| `TURNSTILE_SITE_KEY` | unset | Public Turnstile widget key |
 | `VAPID_PUBLIC_KEY` | unset | Public Web Push application-server key |
 | `VAPID_PRIVATE_KEY` | unset | Secret Web Push application-server key |
 | `VAPID_SUBJECT` | unset | Web Push contact URI (`mailto:` or HTTPS) |

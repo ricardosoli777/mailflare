@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { hasAdminAccount } from "@/lib/auth/setup";
 import { getUserFromSession, SESSION_COOKIE } from "@/lib/auth/session";
+import { turnstileSiteKey } from "@/lib/auth/turnstile";
 import { getEnv } from "@/lib/cloudflare";
 import { authPageMetadata } from "../auth-metadata";
 import { LoginClient } from "./login-client";
@@ -21,7 +22,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
 	return (
 		<AuthGuard mode="public" allowAuthenticated={adding}>
-			<LoginClient adding={adding} />
+			<LoginClient adding={adding} turnstileSiteKey={turnstileSiteKey(env)} />
 		</AuthGuard>
 	);
 }

@@ -2,7 +2,7 @@
  * Public capture form (I1). External pages may post to it, so there is no session and no Origin check.
  * GET only shows the form.
  */
-import { verifyTurnstileToken } from "@/lib/auth/turnstile";
+import { turnstileSiteKey, verifyTurnstileToken } from "@/lib/auth/turnstile";
 import { getEnv } from "@/lib/cloudflare";
 import { getForm, submitForm } from "@/lib/marketing/capture";
 import { checkInboxPage, formPage, notFoundPage, subscribedPage } from "@/lib/marketing/capture-page";
@@ -17,7 +17,7 @@ async function load({ params }: Context) {
 	const db = env.MARKETING_DB;
 	const form = db ? await getForm(db, (await params).id) : null;
 	// The widget needs the public key and the check needs the secret: with only one, neither is used.
-	const siteKey = env.TURNSTILE_SECRET_KEY ? process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY : undefined;
+	const siteKey = env.TURNSTILE_SECRET_KEY ? turnstileSiteKey(env) : undefined;
 	return form ? { env, db: db!, form, siteKey } : null;
 }
 

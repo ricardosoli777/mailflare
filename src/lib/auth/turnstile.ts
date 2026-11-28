@@ -1,10 +1,14 @@
-import { newId } from "@/lib/ids";
 import { getClientIp } from "@/lib/auth/client-ip";
 
 type TurnstileResponse = {
 	success: boolean;
 	"error-codes"?: string[];
 };
+
+/** The public widget key. Read at run time, so changing it needs no new build; the build-time name still works. */
+export function turnstileSiteKey(env: Pick<CloudflareEnv, "TURNSTILE_SITE_KEY">): string | undefined {
+	return env.TURNSTILE_SITE_KEY?.trim() || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || undefined;
+}
 
 export async function verifyTurnstileToken(
 	env: Pick<CloudflareEnv, "TURNSTILE_SECRET_KEY">,
@@ -25,14 +29,15 @@ export async function verifyTurnstileToken(
 				secret,
 				response: token,
 				remoteip: getClientIp(request) ?? undefined,
-				idempotency_key: newId("ts"),
 			}),
 		});
 	} catch {
 		return false;
 	}
 
-	if (!response.ok) return false;
-	const result = (await response.json()) as TurnstileResponse;
+	const result = (await response.json().catch(() => null)) as TurnstileResponse | null;
+	// The codes say whether the secret or the token was refused; neither value is ever logged.
+	if (!result?.success) console.warn("Turnstile refused", response.status, result?.["error-codes"]?.join(",") ?? "");
+	if (!response.ok || !result) return false;
 	return result.success;
 }

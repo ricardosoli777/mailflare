@@ -27,7 +27,7 @@ import {
 	submitPasskeyMfa,
 } from "./utils";
 
-export function LoginClient({ adding = false }: { adding?: boolean }) {
+export function LoginClient({ adding = false, turnstileSiteKey }: { adding?: boolean; turnstileSiteKey?: string }) {
   const { t } = useLanguage();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -305,7 +305,7 @@ export function LoginClient({ adding = false }: { adding?: boolean }) {
             {error}
           </p>
         )}
-        <TurnstileField resetSignal={turnstileReset} />
+        <TurnstileField siteKey={turnstileSiteKey} resetSignal={turnstileReset} />
         <Button
           type="submit"
           className="h-11 w-full rounded-full px-6 active:scale-[0.98]"

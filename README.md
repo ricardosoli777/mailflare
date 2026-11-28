@@ -206,7 +206,8 @@ npx wrangler d1 migrations apply MARKETING_DB --remote
 | `APP_URL` | Endereço público do app |
 | `CONFIG_ENCRYPTION_KEY` | Cifrar as credenciais da AWS no banco. Se perder, cadastre a chave da AWS de novo |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Notificações push (opcional) |
-| `TURNSTILE_SECRET_KEY` | Proteção contra robôs (opcional; precisa também de `NEXT_PUBLIC_TURNSTILE_SITE_KEY` na compilação) |
+| `TURNSTILE_SECRET_KEY` | Proteção contra robôs (opcional; use junto com `TURNSTILE_SITE_KEY`) |
+| `TURNSTILE_SITE_KEY` | Chave pública do Turnstile, lida em tempo de execução |
 
 4. Abra `/setup`, crie o administrador, ative o 2FA ou uma chave de acesso e conecte o domínio.
 5. Em **Marketing → Envio**, configure o remetente no subdomínio de marketing.

@@ -21,7 +21,7 @@ import {
 } from "./utils";
 import type { DomainPreflight, DomainSetupResult, SetupRequirementCheck } from "./types";
 
-export function RegisterClient() {
+export function RegisterClient({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   const { t } = useLanguage();
   const router = useRouter();
   const [hasAdminAccount, setHasAdminAccount] = useState<boolean | null>(null);
@@ -529,7 +529,7 @@ export function RegisterClient() {
 							{t("setup.checkMxAgain")}
 						</Button>
 					)}
-          <TurnstileField resetSignal={turnstileReset} />
+          <TurnstileField siteKey={turnstileSiteKey} resetSignal={turnstileReset} />
 					<Button
 						type="submit"
 						className="h-11 w-full rounded-full px-6 active:scale-[0.98] mt-8"
