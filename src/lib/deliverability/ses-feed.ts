@@ -66,7 +66,10 @@ export async function setupSesFeed(env: CloudflareEnv, origin: string): Promise<
 			},
 		],
 	});
-	if (!(await listSubscriptions(config, topicArn)).some((subscription) => subscription.endpoint === endpoint)) {
+	// Stored before subscribing: SNS calls the endpoint to confirm at once, and it refuses a token it does not know.
+	await saveState(env, { region: config.region, topicArn, token, endpoint, identities: previous?.identities ?? [] });
+	// An unconfirmed subscription is asked for again, which makes SNS resend the confirmation.
+	if (!(await listSubscriptions(config, topicArn)).some((subscription) => subscription.endpoint === endpoint && subscription.confirmed)) {
 		await subscribeHttps(config, topicArn, endpoint);
 	}
 	const sesDomains = await getDb(env).select({ hostname: domains.hostname }).from(domains).where(eq(domains.sendingProvider, "ses"));
