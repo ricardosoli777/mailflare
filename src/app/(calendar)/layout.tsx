@@ -51,9 +51,9 @@ export default function CalendarLayout({ children }: { children: React.ReactNode
                 <SidebarAside className="shrink-0"><CalendarMenu /></SidebarAside>
                 <div className="flex min-h-0 min-w-0 flex-1 flex-col md:py-2 md:pr-2">
                 <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white md:rounded-2xl">
-                  <header className="flex min-h-16 w-full shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-neutral-200 py-2 pl-5 pr-3 text-sm max-md:pl-2">
+                  <header className="flex min-h-16 w-full shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-neutral-200 py-2 pl-5 pr-3 text-sm max-md:gap-x-1 max-md:pl-2 max-md:pr-2">
                     <MobileMenuButton />
-                    <h1 className="min-w-0 truncate text-lg font-semibold text-neutral-900">{pathname === "/calendar" ? t("calendar.calendar") : t("calendar.menu.bookingTypes")}</h1>
+                    <h1 className="min-w-0 truncate text-lg font-semibold text-neutral-900 max-md:flex-1 max-md:basis-0 max-md:text-base">{pathname === "/calendar" ? t("calendar.calendar") : t("calendar.menu.bookingTypes")}</h1>
                     <div id="calendar-header-slot" className="flex min-w-0 flex-1 items-center justify-end gap-2 max-md:order-last max-md:basis-full max-md:empty:hidden" />
                     <div className="ml-auto flex shrink-0 items-center gap-2">
                       <LicenseIndicator />
