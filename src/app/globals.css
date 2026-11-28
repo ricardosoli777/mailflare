@@ -3,12 +3,16 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-	--color-neutral-500: #6b6b6b;
-	--background: #f6f8fc;
+	--color-neutral-50: #f5f6f9;
+	--color-neutral-100: #eceef3;
+	--color-neutral-200: #d2d7e0;
+	--color-neutral-300: #b4bbc8;
+	--color-neutral-500: #5f6368;
+	--background: #e7eaf1;
 	--foreground: #202124;
 	--card: #ffffff;
-	--muted: #eef3fb;
-	--border: #dadce0;
+	--muted: #e9eef8;
+	--border: #d2d7e0;
 	--primary: #0b57d0;
 	--primary-foreground: #ffffff;
 }
@@ -233,19 +237,19 @@ button {
    instead of dimming it. */
 .dark {
 	color-scheme: dark;
-	--background: #202124;
+	--background: #121316;
 	--foreground: #e8eaed;
-	--card: #292a2d;
-	--muted: #303134;
-	--border: #3c4043;
+	--card: #1f2125;
+	--muted: #282b30;
+	--border: #424750;
 	--primary: #8ab4f8;
-	--primary-foreground: #202124;
-	--color-white: #292a2d;
+	--primary-foreground: #121316;
+	--color-white: #1f2125;
 	--color-black: #000;
-	--color-neutral-50: #303134;
-	--color-neutral-100: #35363a;
-	--color-neutral-200: #3c4043;
-	--color-neutral-300: #5f6368;
+	--color-neutral-50: #282b30;
+	--color-neutral-100: #31353b;
+	--color-neutral-200: #424750;
+	--color-neutral-300: #656b75;
 	--color-neutral-400: #9aa0a6;
 	--color-neutral-500: #a8aeb4;
 	--color-neutral-600: #bdc1c6;
@@ -253,10 +257,10 @@ button {
 	--color-neutral-800: #e8eaed;
 	--color-neutral-900: #f1f3f4;
 	--color-neutral-950: #ffffff;
-	--color-gray-50: #303134;
-	--color-gray-100: #35363a;
-	--color-gray-200: #3c4043;
-	--color-gray-300: #5f6368;
+	--color-gray-50: #282b30;
+	--color-gray-100: #31353b;
+	--color-gray-200: #424750;
+	--color-gray-300: #656b75;
 	--color-gray-400: #80868b;
 	--color-gray-500: #9aa0a6;
 	--color-gray-600: #bdc1c6;
@@ -264,10 +268,10 @@ button {
 	--color-gray-800: #e8eaed;
 	--color-gray-900: #f1f3f4;
 	--color-gray-950: #ffffff;
-	--color-stone-50: #303134;
-	--color-stone-100: #35363a;
-	--color-stone-200: #3c4043;
-	--color-stone-300: #5f6368;
+	--color-stone-50: #282b30;
+	--color-stone-100: #31353b;
+	--color-stone-200: #424750;
+	--color-stone-300: #656b75;
 	--color-stone-400: #80868b;
 	--color-stone-500: #9aa0a6;
 	--color-stone-600: #bdc1c6;
@@ -275,10 +279,10 @@ button {
 	--color-stone-800: #e8eaed;
 	--color-stone-900: #f1f3f4;
 	--color-stone-950: #ffffff;
-	--color-zinc-50: #303134;
-	--color-zinc-100: #35363a;
-	--color-zinc-200: #3c4043;
-	--color-zinc-300: #5f6368;
+	--color-zinc-50: #282b30;
+	--color-zinc-100: #31353b;
+	--color-zinc-200: #424750;
+	--color-zinc-300: #656b75;
 	--color-zinc-400: #80868b;
 	--color-zinc-500: #9aa0a6;
 	--color-zinc-600: #bdc1c6;
@@ -286,10 +290,10 @@ button {
 	--color-zinc-800: #e8eaed;
 	--color-zinc-900: #f1f3f4;
 	--color-zinc-950: #ffffff;
-	--color-slate-50: #303134;
-	--color-slate-100: #35363a;
-	--color-slate-200: #3c4043;
-	--color-slate-300: #5f6368;
+	--color-slate-50: #282b30;
+	--color-slate-100: #31353b;
+	--color-slate-200: #424750;
+	--color-slate-300: #656b75;
 	--color-slate-400: #80868b;
 	--color-slate-500: #9aa0a6;
 	--color-slate-600: #bdc1c6;
@@ -492,12 +496,12 @@ button {
 .dark .bg-pink-600 { background-color: oklch(59.2% 0.249 0.584); }
 .dark .bg-orange-600 { background-color: oklch(64.6% 0.222 41.116); }
 /* Fixed-hex backgrounds (page, panels) and their hover: variants (inbox rows, mailbox selector) */
-.dark .bg-\[\#f6f8fc\], .dark .bg-\[\#f7f9fc\] { background-color: #202124; }
-.dark .bg-\[\#f2f6fc\], .dark .bg-\[\#f1f4fa\], .dark .bg-\[\#f0f3f9\] { background-color: #303134; }
-.dark .bg-\[\#eef3fb\], .dark .bg-\[\#eaf1fb\], .dark .bg-\[\#e6ecf6\] { background-color: #383a3e; }
+.dark .bg-\[\#f6f8fc\], .dark .bg-\[\#f7f9fc\] { background-color: #121316; }
+.dark .bg-\[\#f2f6fc\], .dark .bg-\[\#f1f4fa\], .dark .bg-\[\#f0f3f9\] { background-color: #282b30; }
+.dark .bg-\[\#eef3fb\], .dark .bg-\[\#eaf1fb\], .dark .bg-\[\#e6ecf6\] { background-color: #31353b; }
 .dark .hover\:bg-\[\#f2f6fc\]:hover,
-.dark .bg-\[\#f2f6fc\] { background-color: #35363a; }
-.dark .hover\:bg-\[\#e6ecf6\]:hover { background-color: #3c4043; }
+.dark .bg-\[\#f2f6fc\] { background-color: #31353b; }
+.dark .hover\:bg-\[\#e6ecf6\]:hover { background-color: #424750; }
 /* Soft shadows turn dark */
 .dark .shadow-neutral-200, .dark .shadow-neutral-300 { --tw-shadow-color: rgb(0 0 0 / 0.6); }
 /* HTML emails assume a white background: keep them on light "paper" inside the dark theme */
@@ -509,10 +513,30 @@ button {
 	padding: 1rem;
 }
 
+/* Page canvas set by hex in the app shells (dark values are overridden above). */
+.bg-\[\#f6f8fc\], .bg-\[\#f7f9fc\] { background-color: var(--background); }
+
+/* Panels get an edge, so boxes, columns and the page read as separate things. */
+@media (min-width: 768px) {
+	:is(.rounded-3xl, .rounded-2xl).bg-white {
+		border: 1px solid var(--color-neutral-200);
+		box-shadow: 0 1px 3px rgb(0 0 0 / 0.07);
+	}
+}
+
+/* Fields and outline buttons need a stronger edge than a panel does. */
+:is(input, select, textarea).border-neutral-200:not(:focus),
+:is(input, select, textarea).border:not([class*="border-"]),
+:is(button, a).border.border-neutral-200:not(:hover):not(:focus-visible) {
+	border-color: var(--color-neutral-300);
+}
+
 /* On phones the settings/admin body is already white and padded, so white cards drop their own side padding to line up with the page header. */
 @media (max-width: 767px) {
 	.page-flush :is(.bg-white.p-6, .bg-white.p-5) {
 		padding-inline: 0;
+		border-radius: 0;
+		border-bottom: 1px solid var(--color-neutral-200);
 	}
 }
 

@@ -19,12 +19,12 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
-// Colours are the --background tokens in globals.css (light #f6f8fc, dark #202124).
+// Colours are the --background tokens in globals.css (light #e7eaf1, dark #121316).
 // viewportFit "cover" lets the shell reach the notch and home indicator; the env(safe-area-inset-*) padding keeps content clear of them.
 export const viewport: Viewport = {
 	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "#f6f8fc" },
-		{ media: "(prefers-color-scheme: dark)", color: "#202124" },
+		{ media: "(prefers-color-scheme: light)", color: "#e7eaf1" },
+		{ media: "(prefers-color-scheme: dark)", color: "#121316" },
 	],
 	viewportFit: "cover",
 };
