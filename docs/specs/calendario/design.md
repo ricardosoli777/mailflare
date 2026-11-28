@@ -11,7 +11,7 @@ src/app/(calendar)/…           telas internas (menu próprio)
 src/app/book, src/app/c        páginas públicas
 src/app/api/booking, …/public  APIs internas e públicas
 src/lib/booking/               regras: vagas, reserva, ciclo, mensagens
-src/lib/booking/payments/      contrato de pagamento + stripe, hotmart
+src/lib/booking/payments/      contrato de pagamento + stripe, hotmart, ticto
 src/lib/integrations/          conexões OAuth + google, microsoft, zoom, caldav, ics
 src/lib/messaging/sms/         contrato de SMS + provedor
 ```
@@ -71,9 +71,27 @@ Ao confirmar, o app grava os envios futuros em `booking_messages` com chave úni
 - **Google:** pedir o menor escopo possível. Com o app em modo de teste o Google expira o acesso em poucos dias, então publicar em produção antes de depender dele.
 - Antes de cada integração, ler a documentação oficial atual do provedor.
 
+### Campos por provedor (conferir de novo na onda)
+
+| Provedor | Campos | Aviso recebido | Documentação |
+|---|---|---|---|
+| Stripe | chave secreta (de preferência restrita), segredo do webhook (`whsec_`) | cabeçalho `Stripe-Signature` sobre o corpo bruto; Pix só confirma em `checkout.session.async_payment_succeeded` | https://docs.stripe.com/webhooks |
+| Hotmart | `client_id`, `client_secret`, token Basic, `hottok` | cabeçalho `X-HOTMART-HOTTOK` | https://developers.hotmart.com/docs/en/2.0.0/webhook/purchase-webhook/ |
+| Ticto | token do webhook 2.0; `client_id` e `client_secret` se usarmos a API | campo `token` no corpo; pago = `status: authorized` | https://xavier.ticto.dev/docs/v2 |
+| Google | ID e segredo do cliente OAuth | OAuth | documentação da Google Calendar API |
+| Microsoft | ID do locatário, ID e segredo do aplicativo | OAuth | Microsoft Graph |
+| Zoom | ID e segredo do aplicativo | OAuth | Zoom App Marketplace |
+| Pixels e analytics | identificador de cada um | não se aplica | de cada provedor |
+
+Ticto e Hotmart autenticam o aviso por um segredo fixo, sem assinatura do corpo. Por isso: comparação em tempo constante, conferência de produto, oferta e valor contra a reserva, idempotência pela transação e, quando a API permitir, consulta da transação antes de confirmar. A documentação da Ticto não descreve reenvio; o app precisa de conferência manual da reserva pendente. Falta confirmar como levar a referência da reserva até o checkout e de volta (Ticto: `url_params`/`sck`; Hotmart: `sck`/`xcod`).
+
+## Incorporação em outros sites
+
+Hoje `src/lib/security/headers.ts` envia `frame-ancestors 'self'` e `X-Frame-Options: SAMEORIGIN`. Criar a rota `/embed/…`, única com cabeçalhos próprios (`frame-ancestors` com os domínios do dono, ou todos, e sem `X-Frame-Options`). Ela não usa cookie de sessão nem expõe nada além do agendamento. Um script pequeno ajusta a altura por `postMessage`. Pagamento que não pode rodar em iframe abre em nova aba.
+
 ## Segurança
 
-- Endpoints públicos com limite de tentativas, Turnstile, validação de tamanho e tipo.
+- Endpoints públicos com limite de tentativas, Turnstile, validação de tamanho e tipo. Como todo envio cria contato de marketing, a proteção contra robôs entra na mesma tarefa dessa ligação.
 - Links de cancelar/remarcar com token aleatório, guardado como hash, com validade.
 - Webhooks recebidos: assinatura, tolerância de relógio, idempotência por identificador do evento.
 - Webhooks enviados: o mesmo mecanismo que já existe para e-mail.

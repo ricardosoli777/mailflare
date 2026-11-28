@@ -40,13 +40,15 @@ Se a mesma tarefa falhar três voltas no ciclo, parar e levar o problema ao dono
 - [ ] 2.4 Cartões de tipos de reunião
 - [ ] 2.5 Página pública com mês e horários lado a lado
 - [ ] 2.6 Painel inicial (com os números que já existem)
+- [ ] 2.7 Código iframe para páginas externas (R17)
+- [ ] 2.8 Formulário de agendamento vira contato do Marketing, com aviso e proteção contra robôs (R9.2, R9.5, R9.6)
 
 ### Onda 3: disponibilidade e tipos (R4, R5, R6)
 - [ ] 3.1 Agendas salvas, datas específicas, folgas e extras
 - [ ] 3.2 Antecedência, janela, intervalo, folgas, limites, "parecer ocupado"
 - [ ] 3.3 Grupo, convidados, vários locais e durações
 - [ ] 3.4 Perguntas próprias
-- [ ] 3.5 Compartilhar: uso único, incorporar, assinatura, QR code
+- [ ] 3.5 Compartilhar: uso único, botão e janela flutuante, assinatura, QR code
 
 ### Onda 4: ciclo da reserva e mensagens (R7, R8 por e-mail e WhatsApp)
 - [ ] 4.1 Reserva como entidade, com estados; tela de reservas e clientes
@@ -57,20 +59,20 @@ Se a mesma tarefa falhar três voltas no ciclo, parar e levar o problema ao dono
 - [ ] 4.6 Exportar e marcar ausência
 
 ### Onda 5: Marketing e calendários externos (R9, R10, R11)
-- [ ] 5.1 Cliente vira contato com consentimento; eventos iniciam fluxos
-- [ ] 5.2 Conexões cifradas; URL ICS e CalDAV bloqueando horários
+- [ ] 5.1 Eventos de reserva iniciam fluxos do Marketing
+- [ ] 5.2 Tela de chaves e conexões cifradas (R16); URL ICS e CalDAV bloqueando horários
 - [ ] 5.3 Google Calendar e Meet
 - [ ] 5.4 Microsoft Outlook e Teams
 - [ ] 5.5 Zoom
 
-### Onda 6: pagamentos (R12) — responder Q1 antes
+### Onda 6: pagamentos (R12, R16)
 - [ ] 6.1 Contrato de pagamento e segurada de horário
 - [ ] 6.2 Stripe: avulso
 - [ ] 6.3 Hotmart
+- [ ] 6.4a Ticto
 - [ ] 6.4 Cupons
 - [ ] 6.5 Pacotes, assinatura e adicionais
 - [ ] 6.6 Reembolso e taxa de cancelamento
-- [ ] 6.7 Ticto, se Q1 confirmar
 
 ### Onda 7: páginas e SMS (R13, R8.4) — responder Q2 antes
 - [ ] 7.1 Editor do modelo "site", várias páginas
@@ -95,7 +97,10 @@ Se a mesma tarefa falhar três voltas no ciclo, parar e levar o problema ao dono
 | R5, R6 | 3 |
 | R7 | 4 |
 | R8 | 4, 7 |
-| R9, R10, R11 | 5 |
+| R9 | 2, 5 |
+| R10, R11 | 5 |
 | R12 | 6 |
+| R16 | 5, 6, 7, 8 |
+| R17 | 2, 3 |
 | R13 | 2, 7 |
 | R14, R15 | 8 |

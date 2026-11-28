@@ -1,7 +1,7 @@
 # Calendário do MailLead: requisitos
 
 Documentos: **requisitos** (o quê) · [design](design.md) (como) · [tarefas](tarefas.md) (ondas e ciclo).
-Estado: proposto em 2026-11-28, aguardando aprovação.
+Estado: proposto em 2026-11-28, ajustado com as respostas do dono no mesmo dia; aguardando o início da onda 1.
 
 ## Objetivo
 
@@ -12,7 +12,7 @@ Trazer para a seção **Calendário** do MailLead um sistema de agendamento comp
 - **P1. Sem bloqueio por plano.** Nenhuma função do calendário depende de licença ou plano. Tipos de reunião, calendários, páginas, cupons e anfitriões não têm limite imposto pelo app. Os limites que sobram são os dos serviços externos (Cloudflare, Amazon SES, provedor de SMS), que o app mostra quando atinge.
 - **P2. Português do Brasil primeiro.** `pt-BR` é o idioma padrão do app inteiro. Os outros idiomas continuam disponíveis.
 - **P3. E-mail pelo próprio app.** E-mails transacionais e de marketing saem pelo MailLead.
-- **P4. Marketing só com consentimento.** Agendar não inscreve ninguém. Vira contato de marketing apenas quem marcar o consentimento. Sem disparo para listas frias.
+- **P4. Quem preenche o formulário entra no Marketing, avisado.** Vale para reunião gratuita e paga. O formulário informa antes do envio que a pessoa receberá e-mails, e todo e-mail de campanha tem descadastro. Sem disparo para listas frias.
 - **P5. Credenciais são do dono.** Chaves de integrações são digitadas pelo administrador na tela do app, guardadas cifradas e nunca exibidas de volta.
 - **P6. Repositório público.** Nenhum dado pessoal, chave ou captura de tela de terceiros entra no repositório.
 
@@ -45,7 +45,7 @@ Formato: **QUANDO** acontece algo, **O SISTEMA DEVE** fazer algo. "Aceite" é co
 - R4.3 Vários locais para o cliente escolher: Google Meet, Zoom, Teams, telefone, WhatsApp, presencial, texto livre.
 - R4.4 Descrição formatada, imagem de capa, cor, ocultar da página.
 - R4.5 Várias durações opcionais para o mesmo tipo.
-- R4.6 Compartilhar: link, link de uso único, e-mail, redes, incorporar no site (embutido, botão ou pop-up), assinatura de e-mail, QR code.
+- R4.6 Compartilhar: link, link de uso único, e-mail, redes, código para outros sites (R17), assinatura de e-mail, QR code.
 
 ### R5. Disponibilidade
 - R5.1 Agendas de horários salvas e reutilizáveis; um tipo usa uma agenda salva ou horários próprios.
@@ -75,7 +75,9 @@ Formato: **QUANDO** acontece algo, **O SISTEMA DEVE** fazer algo. "Aceite" é co
 
 ### R9. Ligação com o Marketing
 - R9.1 Toda reserva gera um **cliente** no calendário com histórico.
-- R9.2 Com consentimento marcado, vira contato do Marketing, com lista e etiquetas escolhidas no tipo.
+- R9.2 Ao enviar o formulário de agendamento, gratuito ou pago, a pessoa vira contato do Marketing e entra nas campanhas, na lista e nas etiquetas escolhidas no tipo. Isso vale mesmo que o pagamento não seja concluído; as etiquetas separam `agendou-gratis`, `agendou-pago` e `pagamento-pendente`.
+- R9.5 Acima do botão de envio fica o aviso de que a pessoa receberá e-mails (texto editável, nunca vazio). Guardamos o texto, a origem e a data como prova.
+- R9.6 Quem se descadastrou ou está na lista de bloqueio **não** volta a receber campanhas só por agendar de novo. Confirmação e lembretes da reunião continuam saindo.
 - R9.3 Eventos de reserva (criada, cancelada, remarcada, paga, ausente, concluída) podem iniciar fluxos.
 - R9.4 Importar clientes e convidar a agendar, apenas contatos que já têm relação e consentimento.
 
@@ -89,7 +91,7 @@ Formato: **QUANDO** acontece algo, **O SISTEMA DEVE** fazer algo. "Aceite" é co
 - R11.1 Google Meet, Zoom e Microsoft Teams: link gerado por reserva, atualizado na remarcação e removido no cancelamento.
 
 ### R12. Pagamentos
-- R12.1 Provedores conectáveis: **Stripe** (cobrança dentro do fluxo), **Hotmart** (checkout da Hotmart com confirmação automática) e outros pelo mesmo contrato.
+- R12.1 Provedores conectáveis: **Stripe** (cobrança dentro do fluxo), **Hotmart** e **Ticto** (checkout do provedor com confirmação automática) e outros pelo mesmo contrato.
 - R12.2 Reunião avulsa paga, pacote de sessões, assinatura e adicionais.
 - R12.3 Cupons: percentual, valor fixo ou grátis; por tipo; validade; limite total e por pessoa.
 - R12.4 O horário fica reservado por tempo limitado durante o pagamento e volta a ficar livre se falhar.
@@ -112,6 +114,17 @@ Formato: **QUANDO** acontece algo, **O SISTEMA DEVE** fazer algo. "Aceite" é co
 - R15.2 Webhooks assinados e API para reservas, utilizáveis pelo Zapier, Make e n8n; ferramentas MCP.
 - R15.3 Importar tipos, reservas e contatos de outra ferramenta (Calendly).
 
+### R16. Chaves de autenticação
+- R16.1 Toda integração tem tela própria com os campos exatos que a documentação oficial daquele provedor pede, passo a passo de onde obter cada um, endereço de webhook ou de retorno para copiar e botão **Testar conexão**.
+- R16.2 Antes de implementar cada integração, a documentação oficial atual é lida e o link fica na tela e no design.
+- R16.3 Chaves são cifradas, nunca exibidas de volta, e podem ser trocadas ou removidas.
+
+### R17. Calendário em páginas externas
+- R17.1 Código `iframe` pronto para copiar e colar em qualquer página (site próprio, WordPress, construtores de página), de um tipo de reunião ou da lista deles.
+- R17.2 Variações: embutido, botão e janela flutuante; altura que se ajusta sozinha.
+- R17.3 O dono pode limitar quais domínios podem incorporar.
+- Aceite: agendar de ponta a ponta dentro de um iframe em um site de outro domínio, no computador e no celular. Só a página de incorporação aceita iframe; o resto do app continua bloqueado.
+
 ## Fora do escopo
 
 - Programa de indicação e planos comerciais de outras ferramentas.
@@ -128,10 +141,11 @@ Formato: **QUANDO** acontece algo, **O SISTEMA DEVE** fazer algo. "Aceite" é co
 | App no Zoom Marketplace | Zoom | depende do plano Zoom |
 | Conta e chaves no Stripe | cobrança | taxas do Stripe |
 | Produto e webhook na Hotmart | cobrança | taxas da Hotmart |
+| Produto e webhook na Ticto | cobrança | taxas da Ticto |
 | Provedor de SMS | SMS | por mensagem |
 | Domínio próprio no Cloudflare | página com seu endereço | o do domínio |
 
 ## Em aberto
 
-- **Q1.** "TikTok" nas formas de pagamento: é o **pixel do TikTok** (medição, já em R15.1) ou a plataforma de pagamento **Ticto**?
+- **Q1.** Respondida: a terceira forma de pagamento é a **Ticto**.
 - **Q2.** Qual provedor de SMS (definir antes da onda 7).
