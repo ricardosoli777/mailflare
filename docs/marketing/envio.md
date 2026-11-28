@@ -42,6 +42,33 @@ Usuário IAM só para o MailLead, com esta política:
 }
 ```
 
+### Devoluções do e-mail comum
+
+O botão **Conectar** em Admin → Entregabilidade → Endereços suprimidos precisa de mais esta política no mesmo usuário (troque `REGIAO` e `ID_DA_CONTA`):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sns:CreateTopic",
+        "sns:SetTopicAttributes",
+        "sns:Subscribe",
+        "sns:ListSubscriptionsByTopic"
+      ],
+      "Resource": "arn:aws:sns:REGIAO:ID_DA_CONTA:mailflare-feedback"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ses:SetIdentityNotificationTopic",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
 ## Testar com o simulador do SES
 Cadastre como contatos `success@simulator.amazonses.com`, `bounce@simulator.amazonses.com` e `complaint@simulator.amazonses.com`, ou envie o teste da aba Envio para eles. Os dois últimos devem passar a aparecer como bloqueados.
 
