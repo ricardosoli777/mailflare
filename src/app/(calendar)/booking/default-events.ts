@@ -6,11 +6,14 @@ const DEFAULT_EVENTS = [
 	{ id: "template:15-minute", name: "15 Minute Meeting", slug: "15-minute-meeting", durationMinutes: 15, startTime: "14:00", endTime: "16:00" },
 ] as const;
 
-export function visibleBookingEvents(events: BookingEvent[], userId: string, timeZone: string): BookingEvent[] {
+export function visibleBookingEvents(events: BookingEvent[], userId: string, timeZone: string, locale = "en"): BookingEvent[] {
+	// The slug stays the same in every language: it is how a saved template is recognised.
+	const portuguese = locale.toLowerCase().startsWith("pt");
 	if (!userId || events.some((event) => !DEFAULT_EVENTS.some((template) => template.slug === event.slug))) return events;
 	const existingSlugs = new Set(events.map((event) => event.slug));
 	const templates: BookingEvent[] = DEFAULT_EVENTS.filter((template) => !existingSlugs.has(template.slug)).map((template) => ({
 		...template,
+		name: portuguese ? `Reunião de ${template.durationMinutes} minutos` : template.name,
 		userId,
 		description: "",
 		color: DEFAULT_FOLDER_COLOR,

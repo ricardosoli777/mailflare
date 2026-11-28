@@ -21,7 +21,7 @@ import type { BookingEvent, BookingForm, BookingHost } from "./types";
 import { availabilityLabel, durationLabel, emptyBookingForm, formFromEvent } from "./utils";
 
 export default function BookingsPage() {
-	const { t } = useLanguage();
+	const { t, locale } = useLanguage();
 	const { minimal: sidebarMinimal, mobile } = useSidebar();
 	const minimal = sidebarMinimal || mobile;
 	const [events, setEvents] = useState<BookingEvent[]>([]);
@@ -36,7 +36,7 @@ export default function BookingsPage() {
 	const [saving, setSaving] = useState(false);
 	const [menuId, setMenuId] = useState<string | null>(null);
 	const [savingTemplateId, setSavingTemplateId] = useState<string | null>(null);
-	const listEvents = visibleBookingEvents(events, currentUserId, getUserTimeZone());
+	const listEvents = visibleBookingEvents(events, currentUserId, getUserTimeZone(), locale);
 
 	useEffect(() => {
 		let active = true;
