@@ -153,15 +153,15 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5.7.4",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.6.0",
-    "vite-plus": "1.6.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
+    "vite-plus": "1.0.0",
     "wrangler": "^4.127.1"
   },
   "overrides": {
     "@esbuild-kit/core-utils": {
       "esbuild": "^0.25.4"
     },
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.6.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0"
   },
   "type": "module",
   "optionalDependencies": {
