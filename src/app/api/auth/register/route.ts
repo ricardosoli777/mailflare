@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 	if (!firstRunParsed.success) {
 		return NextResponse.json({ error: firstRunParsed.error.flatten() }, { status: 400 });
 	}
-	if (!(await verifyTurnstileToken(env, request, (body as Record<string, unknown>).turnstileToken))) {
+	if (!(await verifyTurnstileToken(env, request, (body as Record<string, unknown>).turnstileToken, "setup"))) {
 		return NextResponse.json({ error: "Verification failed. Please try again." }, { status: 400 });
 	}
 

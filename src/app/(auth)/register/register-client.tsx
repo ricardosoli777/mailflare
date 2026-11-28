@@ -529,7 +529,7 @@ export function RegisterClient({ turnstileSiteKey }: { turnstileSiteKey?: string
 							{t("setup.checkMxAgain")}
 						</Button>
 					)}
-          <TurnstileField siteKey={turnstileSiteKey} resetSignal={turnstileReset} />
+          <TurnstileField action="setup" siteKey={turnstileSiteKey} resetSignal={turnstileReset} />
 					<Button
 						type="submit"
 						className="h-11 w-full rounded-full px-6 active:scale-[0.98] mt-8"

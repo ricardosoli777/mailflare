@@ -6,7 +6,7 @@ const inputType = (field: FormField) => (/telefone|whats|celular|fone/.test(fiel
 
 export function formPage(form: CaptureForm, options: { email?: string; name?: string; fields?: Record<string, string>; whatsapp?: string; phone?: string; error?: string; siteKey?: string; status?: number } = {}): Response {
 	const captcha = options.siteKey
-		? `<div class="cf-turnstile" data-sitekey="${esc(options.siteKey)}" style="margin-top:12px"></div><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`
+		? `<div class="cf-turnstile" data-sitekey="${esc(options.siteKey)}" data-action="capture" style="margin-top:12px"></div><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`
 		: "";
 	return page(`<h1>${esc(form.name)}</h1>${options.error ? `<p role="alert"><strong>${esc(options.error)}</strong></p>` : ""}<form method="post">
 <input name="name" placeholder="Seu nome" aria-label="Seu nome" maxlength="120" autocomplete="name" value="${esc(options.name ?? "")}">

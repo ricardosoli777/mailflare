@@ -40,7 +40,7 @@ export async function POST(request: Request, context: Context) {
 	// Only a program fills the hidden field. It gets the usual answer and nothing happens.
 	if (data.get("website")) return form.doubleOptIn ? checkInboxPage() : subscribedPage();
 	// A snippet on another site carries no token: the person finishes here, where the widget is.
-	if (siteKey && !(await verifyTurnstileToken(env, request, data.get("cf-turnstile-response")))) {
+	if (siteKey && !(await verifyTurnstileToken(env, request, data.get("cf-turnstile-response"), "capture"))) {
 		return formPage(form, { ...input, siteKey, error: "Confirme que você não é um robô." });
 	}
 	const result = await submitForm(db, form, input, {

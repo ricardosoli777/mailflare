@@ -232,7 +232,7 @@ test("public pages escape what they show", async () => {
 	const form = { id: "f", name: "<b>x</b>", listId: "l", tags: [], consentText: '"><script>1</script>', doubleOptIn: true, fields: [{ key: "\"><x", label: "\"><x", required: false }], button: "<x>" };
 	const html = await pages.formPage(form, { email: '"><img src=x>', error: "<i>" }).text();
 	assert.ok(!html.includes("<script>1") && !html.includes("<img src=x>") && !html.includes("<b>x</b>") && !html.includes("<x"));
-	assert.ok(!html.includes("cf-turnstile"));
+	assert.ok(!html.includes('data-action="capture"'));
 	assert.ok((await pages.formPage(form, { siteKey: "chave" }).text()).includes("cf-turnstile"));
 	const message = pages.confirmationMessage("KLEAD", "<x>", "https://a.example/k/t");
 	assert.ok(!message.html.includes("<x>") && message.html.includes("https://a.example/k/t") && message.text.includes("https://a.example/k/t"));

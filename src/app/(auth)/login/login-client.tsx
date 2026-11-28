@@ -305,7 +305,7 @@ export function LoginClient({ adding = false, turnstileSiteKey }: { adding?: boo
             {error}
           </p>
         )}
-        <TurnstileField siteKey={turnstileSiteKey} resetSignal={turnstileReset} />
+        <TurnstileField action="login" siteKey={turnstileSiteKey} resetSignal={turnstileReset} />
         <Button
           type="submit"
           className="h-11 w-full rounded-full px-6 active:scale-[0.98]"

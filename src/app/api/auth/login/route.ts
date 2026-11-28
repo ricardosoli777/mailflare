@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 	if (!(await allowLoginAttempt(env, request))) {
 		return authError("rate_limited", 429, { "Retry-After": "60" });
 	}
-	if (!(await verifyTurnstileToken(env, request, (body as Record<string, unknown>).turnstileToken))) {
+	if (!(await verifyTurnstileToken(env, request, (body as Record<string, unknown>).turnstileToken, "login"))) {
 		return authError("verification_failed", 400);
 	}
 

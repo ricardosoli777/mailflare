@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
+import type { TurnstileAction } from "@/lib/auth/turnstile-types";
 
 type TurnstileWindow = Window & {
 	turnstile?: {
@@ -9,6 +10,7 @@ type TurnstileWindow = Window & {
 			container: HTMLElement,
 			options: {
 				sitekey: string;
+				action: string;
 				callback: (token: string) => void;
 				"expired-callback": () => void;
 				"error-callback": () => void;
@@ -51,10 +53,12 @@ function loadTurnstileScript(): Promise<void> {
 
 export function TurnstileField({
 	siteKey,
+	action,
 	name = "turnstileToken",
 	resetSignal,
 }: {
 	siteKey?: string;
+	action: TurnstileAction;
 	name?: string;
 	resetSignal?: number;
 }) {
@@ -72,6 +76,7 @@ export function TurnstileField({
 			if (!turnstile || widgetId.current) return;
 			widgetId.current = turnstile.render(containerRef.current, {
 				sitekey: siteKey,
+				action,
 				callback: setToken,
 				"expired-callback": () => setToken(""),
 				"error-callback": () => setToken(""),
@@ -86,7 +91,7 @@ export function TurnstileField({
 			if (turnstile && widgetId.current) turnstile.remove(widgetId.current);
 			widgetId.current = undefined;
 		};
-	}, [siteKey]);
+	}, [siteKey, action]);
 
 	useEffect(() => {
 		if (!resetSignal || !widgetId.current) return;
