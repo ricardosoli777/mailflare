@@ -1,3 +1,5 @@
+import { calendarText } from "@/lib/calendar/mail-text-utils";
+import { getRequestLocale } from "@/lib/i18n/server";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getDb } from "@/db";
@@ -173,14 +175,15 @@ export async function POST(request: Request, { params }: InviteRouteParams) {
 		const candidates = [...splitEmailAddressList(message.toAddr), ...splitEmailAddressList(message.ccAddr ?? "")].map(getEmailAddress).filter(Boolean);
 		if (isCounter && !proposal) return NextResponse.json({ error: "Choose a valid proposed start and end" }, { status: 400 });
 		const counterProposal = isCounter ? proposal : null;
-		const verb = counterProposal ? "New time proposed" : { accepted: "Accepted", tentative: "Tentatively accepted", declined: "Declined" }[response];
-		const subject = `${verb}: ${invite.title}`.replace(/\s+/g, " ").trim();
+		const words = calendarText(await getRequestLocale());
+		const answer = counterProposal ? "counter" : response;
+		const subject = `${words.replySubject[answer]}: ${invite.title}`.replace(/\s+/g, " ").trim();
 		let lastError: unknown = null;
 		for (const from of candidates) {
 			try {
 				const text = counterProposal
-					? `${buildReplyText(from, "proposed a new time for", invite.title, body.note)}\n\nProposed time: ${counterProposal.startsAt.toISOString()} - ${counterProposal.endsAt.toISOString()}`
-					: buildReplyText(from, verb.toLowerCase(), invite.title, body.note);
+					? `${buildReplyText(from, words.replyVerb.counter, invite.title, body.note)}\n\n${words.proposedTime}: ${counterProposal.startsAt.toISOString()} - ${counterProposal.endsAt.toISOString()}`
+					: buildReplyText(from, words.replyVerb[answer], invite.title, body.note);
 				const ics = counterProposal
 					? buildCounterIcs(invite, from, counterProposal, typeof body.note === "string" && body.note.trim() ? { message: body.note } : undefined)
 					: buildReplyIcs(invite, from, response);

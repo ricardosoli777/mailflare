@@ -27,11 +27,11 @@ Se a mesma tarefa falhar três voltas no ciclo, parar e levar o problema ao dono
 ## Ondas
 
 ### Onda 1: base (R1, P1, P2)
-- [ ] 1.1 `pt-BR` como idioma padrão, com inglês como reserva
-- [ ] 1.2 Textos fixos em inglês do calendário, reservas e e-mails traduzidos
+- [x] 1.1 `pt-BR` como idioma padrão, com inglês como reserva
+- [x] 1.2 Textos fixos em inglês do calendário, da página pública e dos e-mails de reunião traduzidos (faltam mensagens de erro de algumas APIs internas)
 - [ ] 1.3 Fontes novas no app e nas páginas públicas (amostra antes)
-- [ ] 1.4 Menu da seção Calendário (só itens que já funcionam aparecem)
-- [ ] 1.5 Vários anfitriões sem exigir licença
+- [ ] 1.4 Menu da seção Calendário: hoje só há duas seções prontas; passa para a onda 2, junto das telas novas
+- [x] 1.5 Vários anfitriões sem exigir licença (só administrador; limite técnico de 20 por reunião)
 
 ### Onda 2: visual novo (R2, R3, R4.1, R13.1)
 - [ ] 2.1 Desenho das telas para aprovação

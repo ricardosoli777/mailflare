@@ -15,7 +15,7 @@ export function normalizeReminderMinutes(value: unknown): number | null {
 export function formatReminderBody(startsAt: Date, timeZone: string, location: string): string {
 	let time: string;
 	try {
-		time = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone }).format(startsAt);
+		time = new Intl.DateTimeFormat("pt-BR", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone }).format(startsAt);
 	} catch {
 		time = startsAt.toISOString();
 	}

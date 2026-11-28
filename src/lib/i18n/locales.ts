@@ -47,5 +47,8 @@ export const locales = {
 } satisfies Record<string, LocaleEntry>;
 
 export type Locale = keyof typeof locales;
-export const DEFAULT_LOCALE = "en" satisfies Locale;
+/** The language shown to someone who has not chosen one. */
+export const DEFAULT_LOCALE = "pt-BR" satisfies Locale;
+/** The bundled catalog, used for missing keys, when a catalog cannot be read and outside the provider. */
+export const FALLBACK_LOCALE = "en" satisfies Locale;
 export const supportedLocales = Object.keys(locales) as Locale[];

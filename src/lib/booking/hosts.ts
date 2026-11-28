@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import type { getDb } from "@/db";
 import { users } from "@/db/schema";
 
@@ -10,6 +10,12 @@ export function parseBookingHostIds(value: string, ownerId: string): string[] {
 		if (Array.isArray(parsed) && parsed.length && parsed.every((id) => typeof id === "string" && id.length > 0) && new Set(parsed).size === parsed.length) return [ownerId, ...parsed.filter((id) => id !== ownerId)];
 	} catch { /* Older booking events have only the owner. */ }
 	return [ownerId];
+}
+
+/** People an admin can add as hosts. Their photos sit behind account management, so the list shows initials. */
+export async function listBookingHostCandidates(db: Db, ownerId: string) {
+	const rows = await db.select({ id: users.id, name: users.name, email: users.email }).from(users).where(and(ne(users.id, ownerId), eq(users.disabled, false), eq(users.calendarEnabled, true)));
+	return rows.map((row) => ({ ...row, hasAvatar: false }));
 }
 
 export async function validBookingHostIds(db: Db, ownerId: string, requested: string[], canManageHosts: boolean): Promise<string[] | null> {

@@ -29,8 +29,8 @@ test("reminder offsets accept whole minutes in range and nothing else", () => {
 
 test("reminder body shows the start in the event zone and the location when set", () => {
 	const start = new Date("2026-11-02T14:30:00Z");
-	assert.equal(formatReminderBody(start, "America/New_York", ""), "Mon, Nov 2, 9:30 AM");
-	assert.equal(formatReminderBody(start, "America/New_York", " Room 4 "), "Mon, Nov 2, 9:30 AM · Room 4");
+	assert.equal(formatReminderBody(start, "America/New_York", ""), new Intl.DateTimeFormat("pt-BR", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }).format(start));
+	assert.equal(formatReminderBody(start, "America/New_York", " Room 4 "), `${formatReminderBody(start, "America/New_York", "")} · Room 4`);
 	assert.match(formatReminderBody(start, "Not/AZone", ""), /2026-11-02/);
 });
 

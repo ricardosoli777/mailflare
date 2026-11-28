@@ -21,7 +21,7 @@ const endsAt = new Date("2026-11-17T13:30:00Z");
 const content = { eventName: "Intro call", hostName: "Paul", guestName: "Ana", location: "", notes: "", startsAt, endsAt, timeZone: "Europe/Berlin" };
 
 test("formats the slot in the event's time zone, worded for the guest's locale", () => {
-	assert.match(formatBookingWhen(startsAt, endsAt, "Europe/Berlin"), /^Tuesday,? 17 November 2026, 14:00–14:30 \(Europe\/Berlin\)$/);
+	assert.match(formatBookingWhen(startsAt, endsAt, "Europe/Berlin", "en-GB"), /^Tuesday,? 17 November 2026, 14:00–14:30 \(Europe\/Berlin\)$/);
 	assert.match(formatBookingWhen(startsAt, endsAt, "Europe/Berlin", "de"), /^Dienstag, 17\. November 2026, 14:00–14:30 \(Europe\/Berlin\)$/);
 });
 
@@ -29,19 +29,27 @@ test("falls back to UTC for an unknown time zone", () => {
 	assert.match(formatBookingWhen(startsAt, endsAt, "Not/AZone"), /13:00–13:30 \(UTC\)$/);
 });
 
-test("picks the booking page language, then the browser's, then English", () => {
+test("picks the booking page language, then the browser's, then Brazilian Portuguese", () => {
 	assert.equal(pickGuestLocale("de", "en-US,en;q=0.9"), "de");
 	assert.equal(pickGuestLocale(null, "fr-FR,de;q=0.8"), "fr-FR");
-	assert.equal(pickGuestLocale("not a tag!", "*"), "en-GB");
-	assert.equal(pickGuestLocale(undefined, undefined), "en-GB");
+	assert.equal(pickGuestLocale("not a tag!", "*"), "pt-BR");
+	assert.equal(pickGuestLocale(undefined, undefined), "pt-BR");
+});
+
+test("a Portuguese guest gets the Portuguese confirmation", () => {
+	const mail = buildBookingConfirmation({ ...content, location: "Google Meet" });
+	assert.equal(mail.subject, "Confirmado: Intro call com Paul");
+	assert.match(mail.text, /^Olá, Ana!\n\nSeu agendamento está confirmado: Intro call com Paul\.\n\nQuando: terça-feira, 17 de novembro de 2026, 14:00–14:30/);
+	assert.match(mail.text, /\nOnde: Google Meet\n/);
+	assert.doesNotMatch(mail.text, /\{/);
 });
 
 test("without a template the default English text is sent, dropping an empty location", () => {
-	const mail = buildBookingConfirmation(content);
+	const mail = buildBookingConfirmation(content, "en-GB");
 	assert.equal(mail.subject, "Confirmed: Intro call with Paul");
 	assert.match(mail.text, /^Hi Ana,\n\nyour booking is confirmed: Intro call with Paul\.\n\nWhen: Tuesday,? 17 November 2026, 14:00–14:30 \(Europe\/Berlin\)\n\nThe attached calendar file/);
 	assert.doesNotMatch(mail.text, /Where:|Notes:|\{/);
-	const full = buildBookingConfirmation({ ...content, location: "https://meet.example/abc", notes: "About pricing" });
+	const full = buildBookingConfirmation({ ...content, location: "https://meet.example/abc", notes: "About pricing" }, "en-GB");
 	assert.match(full.text, /\nWhere: https:\/\/meet\.example\/abc\n/);
 	assert.doesNotMatch(full.text, /About pricing|Notes:/);
 });

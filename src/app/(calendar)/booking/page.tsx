@@ -42,14 +42,11 @@ export default function BookingsPage() {
 		let active = true;
 		void authFetch("/api/booking").then(async (response) => {
 			if (!response.ok) throw new Error();
-			return response.json() as Promise<{ events: BookingEvent[]; username: string | null; currentUser: BookingHost; canManageHosts: boolean }>;
-		}).then(async (data) => {
-			if (active) { setEvents(data.events); setUsername(data.username ?? ""); setHosts([data.currentUser]); setCurrentUserId(data.currentUser.id); }
-			if (!data.canManageHosts) return;
-			const response = await authFetch("/api/accounts");
-			if (!response.ok) { if (active) toast.error(t("booking.hostListFailed")); return; }
-			const accounts = await response.json() as { accounts: (BookingHost & { disabled: boolean; calendarEnabled?: boolean })[] };
-			if (active) { setHosts([data.currentUser, ...accounts.accounts.filter((account) => !account.disabled && account.calendarEnabled !== false && account.id !== data.currentUser.id).map(({ id, name, email, hasAvatar }) => ({ id, name, email, hasAvatar }))]); setCanManageHosts(true); }
+			return response.json() as Promise<{ events: BookingEvent[]; username: string | null; currentUser: BookingHost; canManageHosts: boolean; hosts: BookingHost[] }>;
+		}).then((data) => {
+			if (!active) return;
+			setEvents(data.events); setUsername(data.username ?? ""); setCurrentUserId(data.currentUser.id);
+			setHosts([data.currentUser, ...data.hosts]); setCanManageHosts(data.canManageHosts);
 		})
 			.catch(() => { if (active) toast.error(t("booking.loadFailed")); })
 			.finally(() => { if (active) setLoading(false); });

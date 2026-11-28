@@ -36,9 +36,28 @@ export const DEFAULT_CONFIRMATION_BODY = [
 	"The attached calendar file adds the meeting to your calendar. Reply to this email if you need to change or cancel it.",
 ].join("\n");
 
-const FALLBACK_LOCALE = "en-GB";
+const FALLBACK_LOCALE = "pt-BR";
 
-/** The locale for {when}: the language the guest picked on the booking page, else their browser's, else English. */
+const PORTUGUESE_CONFIRMATION: BookingConfirmationTemplate = {
+	subject: "Confirmado: {eventName} com {hostName}",
+	body: [
+		"Olá, {guestName}!",
+		"",
+		"Seu agendamento está confirmado: {eventName} com {hostName}.",
+		"",
+		"Quando: {when}",
+		"Onde: {location}",
+		"",
+		"O arquivo de calendário em anexo coloca a reunião na sua agenda. Para remarcar ou cancelar, responda este e-mail.",
+	].join("\n"),
+};
+
+/** The built-in confirmation in the guest's language: Portuguese or English. */
+export function defaultConfirmation(locale: string): BookingConfirmationTemplate {
+	return locale.toLowerCase().startsWith("pt") ? PORTUGUESE_CONFIRMATION : { subject: DEFAULT_CONFIRMATION_SUBJECT, body: DEFAULT_CONFIRMATION_BODY };
+}
+
+/** The locale for {when}: the language the guest picked on the booking page, else their browser's, else Brazilian Portuguese. */
 export function pickGuestLocale(localeCookie: string | null | undefined, acceptLanguage: string | null | undefined): string {
 	const candidates = [localeCookie, ...(acceptLanguage ?? "").split(",").map((part) => part.split(";")[0])];
 	for (const candidate of candidates) {
@@ -112,8 +131,9 @@ export function buildBookingConfirmation(content: BookingConfirmationContent, lo
 	};
 	// A guest's name can go into the subject, so keep it on one header line whatever they typed.
 	const oneLine = (value: string) => value.replace(/[\r\n]+/g, " ").trim();
-	const subject = oneLine(renderBookingTemplate(template?.subject || DEFAULT_CONFIRMATION_SUBJECT, values)) || oneLine(renderBookingTemplate(DEFAULT_CONFIRMATION_SUBJECT, values));
-	return { subject, text: renderBookingTemplate(template?.body || DEFAULT_CONFIRMATION_BODY, values) };
+	const fallback = defaultConfirmation(locale);
+	const subject = oneLine(renderBookingTemplate(template?.subject || fallback.subject, values)) || oneLine(renderBookingTemplate(fallback.subject, values));
+	return { subject, text: renderBookingTemplate(template?.body || fallback.body, values) };
 }
 
 /**
