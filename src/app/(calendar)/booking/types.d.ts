@@ -46,4 +46,4 @@ export type BookingHostAvatarProps = { host: BookingHost; currentUserId: string;
 
 export type BookingHostMatch = { host: BookingHost | null; error: string };
 
-export type BookingEditorSection = "event" | "duration" | "location" | "availability" | "host" | "confirmation" | null;
+export type BookingEditorSection = "details" | "availability" | "emails";

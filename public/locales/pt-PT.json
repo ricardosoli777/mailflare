@@ -3052,5 +3052,9 @@
 	"calendar.range.note": "Os horários fora deste intervalo estão ocultos.",
 	"calendar.closed": "Fechado",
 	"calendar.allDay": "Dia todo",
-	"calendar.search": "Buscar compromissos"
+	"calendar.search": "Buscar compromissos",
+	"booking.editor.close": "Fechar",
+	"booking.editor.tab.details": "Detalhes",
+	"booking.editor.tab.availability": "Disponibilidade",
+	"booking.editor.tab.emails": "E-mails"
 }

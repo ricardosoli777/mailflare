@@ -3052,5 +3052,9 @@
 	"calendar.range.note": "Hours outside this range are hidden.",
 	"calendar.closed": "Closed",
 	"calendar.allDay": "All day",
-	"calendar.search": "Search events"
+	"calendar.search": "Search events",
+	"booking.editor.close": "Close",
+	"booking.editor.tab.details": "Details",
+	"booking.editor.tab.availability": "Availability",
+	"booking.editor.tab.emails": "E-mails"
 }
