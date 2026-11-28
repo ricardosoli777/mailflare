@@ -30,7 +30,7 @@ export async function startFlowTest(db: D1Database, flowId: string, input: { nam
 	const name = String(input.name ?? "").trim().slice(0, 120);
 	const report = await importContacts(db, [{ line: 1, email, name, fields: {} }], { listId: flow.list_id, consent: { source: "teste do funil", text: "Cadastro de teste feito pelo administrador com os próprios dados.", consentedAt: now }, origin: "teste do funil", now });
 	// A blocked or unsubscribed address stays that way, for tests too.
-	if (report.rejected.length) return { error: "Este e-mail saiu da lista ou está bloqueado. Use outro para testar." };
+	if (report.rejected.length) return { error: `Não foi possível testar com este e-mail: ${report.rejected[0].reason}.` };
 	const contact = (await db.prepare("SELECT id FROM marketing_contacts WHERE email = ?").bind(email).first<{ id: string }>())!;
 	if (!(await db.prepare("SELECT 1 AS ok FROM marketing_list_members WHERE list_id = ? AND contact_id = ? AND unsubscribed_at IS NULL").bind(flow.list_id, contact.id).first())) {
 		return { error: "Este e-mail saiu desta lista. Use outro para testar." };

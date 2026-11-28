@@ -105,7 +105,8 @@ const eventStatement = (db: D1Database, contactId: string, type: string, detail:
 
 /**
  * Adds or updates people. An address that left or was blocked is refused untouched (U6), a list a person
- * left stays left, and a consent that is already recorded is not written twice.
+ * left stays left, and a consent that is already recorded is not written twice. An erased address can be
+ * added again: that lifts its "erased" mark, and only that one.
  */
 export async function importContacts(
 	db: D1Database,
@@ -128,10 +129,11 @@ export async function importContacts(
 		}
 	}
 	const blocked = new Set<string>();
+	const erased = new Set<string>();
 	const existing = new Map<string, string>();
 	for (const group of chunk(valid)) {
-		const suppressed = await db.prepare(`SELECT email_hash FROM marketing_suppressions WHERE email_hash IN (${marks(group.length)})`).bind(...group.map((row) => row.hash)).all<{ email_hash: string }>();
-		for (const row of suppressed.results) blocked.add(row.email_hash);
+		const suppressed = await db.prepare(`SELECT email_hash, reason FROM marketing_suppressions WHERE email_hash IN (${marks(group.length)})`).bind(...group.map((row) => row.hash)).all<{ email_hash: string; reason: string }>();
+		for (const row of suppressed.results) (row.reason === "erased" ? erased : blocked).add(row.email_hash);
 		const known = await db.prepare(`SELECT id, email FROM marketing_contacts WHERE email IN (${marks(group.length)})`).bind(...group.map((row) => row.email)).all<{ id: string; email: string }>();
 		for (const row of known.results) existing.set(row.email, row.id);
 	}
@@ -144,6 +146,7 @@ export async function importContacts(
 		const domainProblem = domains.get(domainOf(row.email));
 		if (blocked.has(row.hash)) { reject(row, "saiu da lista ou está bloqueado"); continue; }
 		if (domainProblem) { reject(row, domainProblem); continue; }
+		if (erased.has(row.hash)) statements.push(db.prepare("DELETE FROM marketing_suppressions WHERE email_hash = ? AND reason = 'erased'").bind(row.hash));
 		const found = existing.get(row.email);
 		const id = found ?? newId("con");
 		if (found) {
@@ -192,7 +195,10 @@ export async function updateContact(db: D1Database, id: string, patch: { name?: 
 	if (statements.length) await runBatches(db, statements);
 }
 
-/** Deletes everything about a person except the hash that keeps the address from coming back (C6). */
+/**
+ * Deletes everything about a person (C6). An unsubscribe, bounce or complaint stays and keeps blocking the
+ * address; otherwise only a hash is kept so a restored backup does not bring the data back.
+ */
 export async function eraseContact(db: D1Database, id: string, now = Date.now()): Promise<boolean> {
 	const row = await db.prepare("SELECT email, email_hash FROM marketing_contacts WHERE id = ?").bind(id).first<{ email: string; email_hash: string }>();
 	if (!row) return false;

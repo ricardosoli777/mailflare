@@ -134,7 +134,7 @@ export function ContactManager() {
 	});
 
 	const erase = (contact: ContactSummary) => {
-		if (!window.confirm(`Apagar todos os dados de ${contact.email}? Não dá para desfazer. O endereço fica bloqueado para novos envios.`)) return;
+		if (!window.confirm(`Apagar todos os dados de ${contact.email}? Não dá para desfazer. O endereço poderá ser cadastrado de novo, a menos que tenha pedido descadastro, devolvido ou reclamado.`)) return;
 		void run(async () => {
 			await marketingRequest(`/api/marketing/contacts/${contact.id}`, { method: "DELETE" });
 			setDetail(null);

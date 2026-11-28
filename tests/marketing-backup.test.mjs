@@ -134,3 +134,14 @@ test("the newest thirty copies are kept", async () => {
 	assert.ok(kept[0].name > kept.at(-1).name);
 	assert.equal(backup.isBackupName("../segredo"), false);
 });
+
+test("someone added again after being erased survives a restore made while erased", async () => {
+	const { db } = await filled();
+	const { id, email } = one(db, "SELECT id, email FROM marketing_contacts WHERE email = 'bia@gmail.com'");
+	await store.eraseContact(db, id, NOW + 1);
+	const file = await backup.createBackup(db, NOW + 2);
+	await store.importContacts(db, [{ line: 1, email, name: "", fields: {} }], { listId: null, consent: null, origin: "teste", now: NOW + 3 });
+	await backup.restoreBackup(db, stream(file));
+	assert.ok(one(db, "SELECT 1 AS ok FROM marketing_contacts WHERE email = 'bia@gmail.com'"));
+	assert.equal(one(db, "SELECT count(*) AS n FROM marketing_suppressions").n, 0);
+});

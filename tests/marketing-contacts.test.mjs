@@ -104,7 +104,7 @@ test("U4 and U6: leaving one list is kept through imports and edits", async () =
 	assert.deepEqual(await recipients(), ["a@gmail.com"]);
 });
 
-test("C6: erasing removes the data and keeps only a hash that blocks the address", async () => {
+test("C6: erasing removes the data, and the address can be added again", async () => {
 	const { db, add, find, recipients } = await setup();
 	await add(["a@gmail.com"], { tags: ["vip"] });
 	await store.eraseContact(db, (await find("a@gmail.com")).id);
@@ -112,8 +112,19 @@ test("C6: erasing removes the data and keeps only a hash that blocks the address
 		assert.doesNotMatch(JSON.stringify(db.sqlite.prepare(`SELECT * FROM ${table}`).all()), /a@gmail\.com/, table);
 	}
 	assert.equal(db.sqlite.prepare("SELECT count(*) AS n FROM marketing_suppressions").get().n, 1);
-	assert.equal((await add(["a@gmail.com"])).rejected.length, 1);
 	assert.deepEqual(await recipients(), []);
+	assert.equal((await add(["a@gmail.com"])).added, 1);
+	assert.equal(db.sqlite.prepare("SELECT count(*) AS n FROM marketing_suppressions").get().n, 0);
+	assert.deepEqual(await recipients(), ["a@gmail.com"]);
+});
+
+test("erasing does not lift an unsubscribe", async () => {
+	const { db, add, find } = await setup();
+	await add(["a@gmail.com"]);
+	const { id } = await find("a@gmail.com");
+	await store.unsubscribeAll(db, id, "um clique");
+	await store.eraseContact(db, id);
+	assert.equal((await add(["a@gmail.com"])).rejected.length, 1);
 });
 
 test("C1: filters by list, tag, status and search; large imports stay within D1 limits", async () => {

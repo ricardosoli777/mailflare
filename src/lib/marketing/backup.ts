@@ -156,6 +156,8 @@ export async function restoreBackup(db: D1Database, file: ReadableStream<Uint8Ar
 async function enforceErasure(db: D1Database): Promise<void> {
 	const erased = "SELECT c.id FROM marketing_contacts c JOIN marketing_suppressions s ON s.email_hash = c.email_hash WHERE s.reason = 'erased'";
 	await db.batch([
+		// Someone added again after being erased is a new registration: the old mark no longer applies.
+		db.prepare("DELETE FROM marketing_suppressions WHERE reason = 'erased' AND EXISTS (SELECT 1 FROM marketing_contacts c WHERE c.email_hash = marketing_suppressions.email_hash AND c.created_at > marketing_suppressions.created_at)"),
 		db.prepare(`DELETE FROM marketing_pending WHERE email IN (SELECT email FROM marketing_contacts WHERE id IN (${erased}))`),
 		db.prepare(`DELETE FROM marketing_contacts WHERE id IN (${erased})`),
 		...["marketing_consents", "marketing_events", "marketing_list_members", "marketing_contact_tags", "marketing_flow_runs", "marketing_whatsapp", "marketing_whatsapp_sends"]

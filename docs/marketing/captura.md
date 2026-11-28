@@ -33,3 +33,5 @@ API e webhook nunca desfazem um descadastro ou bloqueio.
 ## Ainda não feito
 - Iniciar um fluxo a partir da entrada (parte do I3) depende da onda 6.
 - Um telefone capturado não é autorização de WhatsApp (onda 7).
+
+Apagar um contato libera o endereço para novo cadastro. Descadastro, devolução e reclamação continuam bloqueando.
