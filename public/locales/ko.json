@@ -2990,5 +2990,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\n그래도 {host}을(를) 강제로 삭제할까요? Mailflare는 DNS 레코드 _mta-sts와 _smtp._tls 제거를 시도한 다음, 레코드 제거에 실패하더라도 도메인과 모든 메일함, 그 안의 모든 메시지를 삭제합니다. 메일 서버는 캐시된 MTA-STS 정책을 한동안 계속 적용할 수 있습니다. 삭제 후에는 직접 제거해야 하는 DNS 레코드 목록이 표시됩니다.\n\n확인하려면 {host}을(를) 입력하세요.",
 	"domains.forceRemoved": "{host}을(를) 삭제했습니다",
 	"domains.forceRemovedRecords": "다음 DNS 레코드는 직접 제거하세요:",
-	"domains.forceRemovedCache": "메일 서버는 {date}까지 이전 MTA-STS 정책을 계속 적용할 수 있습니다."
+	"domains.forceRemovedCache": "메일 서버는 {date}까지 이전 MTA-STS 정책을 계속 적용할 수 있습니다.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

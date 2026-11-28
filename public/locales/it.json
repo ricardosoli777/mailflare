@@ -3020,5 +3020,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\nRimuovere comunque {host} forzatamente? MailLead proverà a rimuovere i suoi record DNS _mta-sts e _smtp._tls, poi eliminerà il dominio, tutte le sue caselle e tutti i loro messaggi, anche se la rimozione dei record fallisce. I server di posta possono continuare per un po' ad applicare la policy MTA-STS memorizzata nella cache. Poi riceverai l'elenco dei record DNS da rimuovere a mano.\n\nDigita {host} per confermare.",
 	"domains.forceRemoved": "{host} rimosso",
 	"domains.forceRemovedRecords": "Rimuovi tu stesso questi record DNS:",
-	"domains.forceRemovedCache": "I server di posta possono continuare ad applicare la vecchia policy MTA-STS fino al {date}."
+	"domains.forceRemovedCache": "I server di posta possono continuare ad applicare la vecchia policy MTA-STS fino al {date}.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

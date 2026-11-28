@@ -23,8 +23,6 @@ import type { CalendarRepeat } from "@/lib/calendar/types";
 import { useLanguage } from "@/components/language-provider";
 import { folderColorKeys } from "@/lib/folders/color-keys";
 import { useSelectedMailbox } from "@/components/mailbox-provider";
-import { useSidebar } from "@/components/sidebar-state";
-import { UpcomingSidebar } from "../upcoming-sidebar";
 import { DayEvents } from "./day-events";
 import { MonthGrid } from "./month-grid";
 import { CalendarSubscribeDialog } from "./subscribe-dialog";
@@ -127,8 +125,6 @@ export default function CalendarPage() {
   const router = useRouter();
   const eventFromUrl = useSearchParams().get("event");
   const { selectedMailbox } = useSelectedMailbox();
-  const { minimal: sidebarMinimal, mobile } = useSidebar();
-  const minimal = sidebarMinimal || mobile;
 
   const now = new Date(currentTime);
   const todayTime = startOfDay(now).getTime();
@@ -470,9 +466,8 @@ export default function CalendarPage() {
   const activeEventId = draggedEvent?.id ?? resizingEvent?.id ?? null;
 
   return (
-    <div className={clsx("flex h-full min-h-0 flex-col bg-[#f6f8fc] pl-3 max-md:pl-0 lg:flex-row transition-[gap] duration-200 ease-in-out motion-reduce:transition-none", minimal ? "gap-0" : "gap-3")}>
+    <div className="flex h-full min-h-0 flex-col">
       <Toaster position="bottom-left" />
-      <h1 className="sr-only">{t("account.calendar")}</h1>
       {loading && <RouteLoadingBarPortal />}
       {headerTarget && createPortal(
         <div className="flex min-w-0 flex-1 items-center justify-between gap-3 ">
@@ -550,9 +545,7 @@ export default function CalendarPage() {
         </div>,
         headerTarget,
       )}
-      <UpcomingSidebar events={events} onSelect={editEvent} />
-
-      <section aria-busy={loading} className="min-h-0 min-w-0 flex-1 rounded-t-3xl bg-white flex flex-col overflow-hidden">
+      <section aria-busy={loading} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <div className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain">
           {view === "month" ? (
             <MonthGrid month={visibleDate} today={today} events={events} currentTime={currentTime}

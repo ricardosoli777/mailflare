@@ -2999,5 +2999,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\nBado unataka kuondoa {host} kwa nguvu? MailLead itajaribu kuondoa rekodi zake za DNS za _mta-sts na _smtp._tls, kisha itafuta kikoa, visanduku vyake vyote vya barua na jumbe zake zote, hata kama kuondoa rekodi kutashindwa. Seva za barua zinaweza kuendelea kutumia sera ya MTA-STS iliyohifadhiwa kwa muda. Baadaye utapata orodha ya rekodi za DNS za kuondoa mwenyewe.\n\nAndika {host} ili kuthibitisha.",
 	"domains.forceRemoved": "{host} imeondolewa",
 	"domains.forceRemovedRecords": "Ondoa rekodi hizi za DNS mwenyewe:",
-	"domains.forceRemovedCache": "Seva za barua zinaweza kuendelea kutumia sera ya zamani ya MTA-STS hadi {date}."
+	"domains.forceRemovedCache": "Seva za barua zinaweza kuendelea kutumia sera ya zamani ya MTA-STS hadi {date}.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

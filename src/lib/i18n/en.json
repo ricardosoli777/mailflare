@@ -2999,5 +2999,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\nForce remove {host} anyway? MailLead will try to remove its _mta-sts and _smtp._tls DNS records, then delete the domain, all its mailboxes and all their messages, even if that fails. Mail servers may keep applying the cached MTA-STS policy for a while. Afterwards you get the DNS records to remove by hand.\n\nType {host} to confirm.",
 	"domains.forceRemoved": "{host} removed",
 	"domains.forceRemovedRecords": "Remove these DNS records yourself:",
-	"domains.forceRemovedCache": "Mail servers may keep applying the old MTA-STS policy until {date}."
+	"domains.forceRemovedCache": "Mail servers may keep applying the old MTA-STS policy until {date}.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

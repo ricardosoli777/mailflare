@@ -2999,5 +2999,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\n{host} yine de zorla kaldırılsın mı? MailLead önce _mta-sts ve _smtp._tls DNS kayıtlarını kaldırmayı dener, ardından kayıtların kaldırılması başarısız olsa bile alan adını, içindeki tüm posta kutularını ve tüm iletilerini siler. Posta sunucuları önbelleğe alınmış MTA-STS politikasını bir süre uygulamaya devam edebilir. Sonrasında elle kaldırmanız gereken DNS kayıtlarının listesini alırsınız.\n\nOnaylamak için {host} yazın.",
 	"domains.forceRemoved": "{host} kaldırıldı",
 	"domains.forceRemovedRecords": "Bu DNS kayıtlarını kendiniz kaldırın:",
-	"domains.forceRemovedCache": "Posta sunucuları eski MTA-STS politikasını {date} tarihine kadar uygulamaya devam edebilir."
+	"domains.forceRemovedCache": "Posta sunucuları eski MTA-STS politikasını {date} tarihine kadar uygulamaya devam edebilir.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

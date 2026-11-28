@@ -16,38 +16,23 @@ function HeaderBar({ tabs = 0 }: { tabs?: number }) {
 }
 
 /** Calendar: left upcoming panel and a week grid under the toolbar. */
+/** Scheduling section: left menu, then one panel with its title row and a list of cards. */
 function CalendarSkeleton() {
 	return (
-		<div className="safe-area flex h-dvh flex-col bg-[#f6f8fc]">
-			<div className="flex h-16 items-center gap-3 px-4">
-				<Skeleton className="h-10 w-10 shrink-0 rounded-full" />
-				<Skeleton className="hidden h-6 w-28 md:block" />
-				<Skeleton className="ml-3 hidden h-10 w-48 rounded-full md:block" />
-				<Skeleton className="h-5 w-32" />
-				<div className="flex-1" />
-				<Skeleton className="h-10 w-10 rounded-full" />
-				<Skeleton className="h-10 w-10 rounded-full" />
-				<Skeleton className="hidden h-10 w-20 rounded-full md:block" />
-				<Skeleton className="h-10 w-36 rounded-full" />
+		<div className="safe-area flex h-dvh bg-[#f6f8fc]">
+			<div className="hidden w-65 shrink-0 space-y-2 p-3 md:block">
+				<Skeleton className="mb-6 h-10 w-36 rounded-xl" />
+				{Array.from({ length: 4 }, (_, row) => <Skeleton key={row} className="h-10 w-full rounded-xl" />)}
 			</div>
-			<div className="flex min-h-0 flex-1 gap-3 pl-3 max-md:pl-0">
-				<div className="hidden w-64 shrink-0 space-y-4 rounded-t-3xl bg-white p-5 lg:block">
-					{Array.from({ length: 4 }, (_, group) => (
-						<div key={group} className="space-y-2">
-							<Skeleton className="h-3 w-24" />
-							<Skeleton className="h-12 w-full rounded-lg" />
-							<Skeleton className="h-12 w-full rounded-lg" />
-						</div>
-					))}
-				</div>
-				<div className="min-w-0 flex-1 overflow-hidden rounded-t-3xl bg-white">
-					<div className="grid h-14 border-b border-neutral-200" style={{ gridTemplateColumns: "64px repeat(7, minmax(0, 1fr))" }}>
-						<div />
-						{Array.from({ length: 7 }, (_, day) => <div key={day} className="flex flex-col gap-1.5 border-l border-neutral-100 px-3 py-2"><Skeleton className="h-3 w-8" /><Skeleton className="h-4 w-6" /></div>)}
+			<div className="flex min-w-0 flex-1 flex-col md:py-2 md:pr-2">
+				<div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white md:rounded-2xl">
+					<div className="flex h-16 items-center gap-3 border-b border-neutral-200 px-5">
+						<Skeleton className="h-6 w-40" />
+						<div className="flex-1" />
+						<Skeleton className="h-10 w-40 rounded-lg" />
 					</div>
-					<div className="grid" style={{ gridTemplateColumns: "64px repeat(7, minmax(0, 1fr))" }}>
-						<div className="space-y-12 p-3">{Array.from({ length: 8 }, (_, hour) => <Skeleton key={hour} className="h-3 w-8" />)}</div>
-						{Array.from({ length: 7 }, (_, day) => <div key={day} className="space-y-10 border-l border-neutral-100 p-2">{day % 2 === 0 && <Skeleton className="h-16 w-full rounded-lg" />}{day % 3 === 0 && <Skeleton className="h-10 w-full rounded-lg" />}</div>)}
+					<div className="mx-auto w-full max-w-5xl space-y-3 px-4 py-4 md:px-8">
+						{Array.from({ length: 3 }, (_, row) => <Skeleton key={row} className="h-24 w-full rounded-2xl" />)}
 					</div>
 				</div>
 			</div>
@@ -88,7 +73,7 @@ const MAIL_PREFIXES = ["/inbox", "/promotions", "/sent", "/drafts", "/starred", 
 /** Placeholder shown while auth resolves, shaped like the page being opened so the layout does not jump. */
 export function RouteSkeleton() {
 	const pathname = usePathname() ?? "";
-	if (pathname === "/calendar" || pathname.startsWith("/calendar/")) return <CalendarSkeleton />;
+	if (["/calendar", "/booking"].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return <CalendarSkeleton />;
 	if (MAIL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return <MailSkeleton />;
 	return <GenericSkeleton />;
 }

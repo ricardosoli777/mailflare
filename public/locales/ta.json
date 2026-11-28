@@ -2999,5 +2999,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\nஅப்படியிருந்தும் {host} ஐ கட்டாயமாக நீக்க வேண்டுமா? MailLead முதலில் அதன் _mta-sts மற்றும் _smtp._tls DNS பதிவுகளை நீக்க முயலும், பிறகு பதிவுகளை நீக்குவது தோல்வியடைந்தாலும் டொமைன், அதன் அனைத்து அஞ்சல்பெட்டிகள் மற்றும் அவற்றின் அனைத்து செய்திகளையும் நீக்கும். அஞ்சல் சேவையகங்கள் சிறிது காலம் தற்காலிகமாகச் சேமித்த MTA-STS கொள்கையைத் தொடர்ந்து பயன்படுத்தலாம். அதன் பிறகு கைமுறையாக நீக்க வேண்டிய DNS பதிவுகளின் பட்டியலைப் பெறுவீர்கள்.\n\nஉறுதிப்படுத்த {host} என தட்டச்சு செய்யவும்.",
 	"domains.forceRemoved": "{host} நீக்கப்பட்டது",
 	"domains.forceRemovedRecords": "இந்த DNS பதிவுகளை நீங்களே நீக்குங்கள்:",
-	"domains.forceRemovedCache": "அஞ்சல் சேவையகங்கள் {date} வரை பழைய MTA-STS கொள்கையைத் தொடர்ந்து பயன்படுத்தலாம்."
+	"domains.forceRemovedCache": "அஞ்சல் சேவையகங்கள் {date} வரை பழைய MTA-STS கொள்கையைத் தொடர்ந்து பயன்படுத்தலாம்.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

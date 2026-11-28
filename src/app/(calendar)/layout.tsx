@@ -2,8 +2,7 @@
 
 import { SkipToContent } from "@/components/skip-to-content";
 import { useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Sparkles } from "@/components/icons";
 import { useLanguage } from "@/components/language-provider";
 import { AgentPanel } from "@/components/agent/agent-panel";
@@ -20,17 +19,14 @@ import { SidebarProvider } from "@/components/sidebar-state";
 import { ShortcutsProvider } from "@/components/shortcuts";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
-import { CalendarLogoBlock } from "./calendar-logo-block";
-import { CalendarMobileUpcoming } from "./calendar-mobile-upcoming";
+import { CalendarMenu } from "./calendar-menu";
 import { useDashboardState } from "../(dashboard)/dashboard-state";
 import { useAssistantAvailability } from "../(dashboard)/use-assistant-availability";
 import { RouteTitle } from "@/components/route-title";
-import { Select } from "@/components/ui/select";
 
 export default function CalendarLayout({ children }: { children: React.ReactNode }) {
   const { t } = useLanguage();
   const pathname = usePathname();
-  const router = useRouter();
   const { assistantOpen, setAssistantOpen, assistantFullSize, setAssistantFullSize } = useDashboardState();
   const assistantEnabled = useAssistantAvailability();
   const assistantVisible = assistantEnabled === true && assistantOpen;
@@ -50,28 +46,24 @@ export default function CalendarLayout({ children }: { children: React.ReactNode
             <MailSearchProvider>
               <ShortcutsProvider>
                 <RouteTitle />
-              <div className="safe-area grid h-dvh grid-cols-[minmax(0,1fr)] overflow-hidden bg-[#f6f8fc]">
+              <div className="safe-area flex h-dvh overflow-hidden bg-[#f6f8fc]">
                 <SkipToContent />
-                <SidebarAside className="md:hidden"><CalendarMobileUpcoming /></SidebarAside>
-                <div className="flex min-h-0 min-w-0 flex-col">
-                  <header className="flex h-16 w-full shrink-0 items-center gap-3 pr-4 text-sm max-md:h-auto max-md:flex-wrap max-md:gap-x-2 max-md:gap-y-2 max-md:pb-2 max-md:pr-2 max-md:pt-1">
-                    <MobileMenuButton className="ml-1" />
-                    <CalendarLogoBlock />
-                    <div className="min-w-0 flex-1 basis-0 md:hidden"><div className="relative w-fit max-w-full"><Select aria-label={t("calendar.sectionLabel")} value={pathname === "/booking" ? "/booking" : "/calendar"} onChange={(event) => router.push(event.target.value)} containerClassName="contents" className="h-8 w-auto max-w-full rounded-full bg-white pl-3 pr-2 text-sm font-medium text-neutral-700"><option value="/booking">{t("calendar.bookings")}</option><option value="/calendar">{t("calendar.calendar")}</option></Select></div></div>
-                    <div className="flex min-w-0 flex-1 items-center gap-3 md:overflow-x-auto max-md:contents">
-                      <nav aria-label={t("calendar.sections")} className="flex shrink-0 max-md:hidden items-center rounded-full bg-white p-1">
-                        <Link href="/booking" aria-current={pathname === "/booking" ? "page" : undefined} className={clsx("rounded-full px-4 py-2 text-sm font-medium transition-colors", pathname === "/booking" ? "bg-blue-600 text-white" : "text-neutral-600 hover:bg-neutral-100")}>{t("calendar.bookings")}</Link>
-                        <Link href="/calendar" aria-current={pathname === "/calendar" ? "page" : undefined} className={clsx("rounded-full px-4 py-2 text-sm font-medium transition-colors", pathname === "/calendar" ? "bg-blue-600 text-white" : "text-neutral-600 hover:bg-neutral-100")}>{t("calendar.calendar")}</Link>
-                      </nav>
-                      <div id="calendar-header-slot" className="flex min-w-0 flex-1 items-center md:min-w-max max-md:order-last max-md:basis-full max-md:pl-3 max-md:empty:hidden" />
+                <SidebarAside className="shrink-0"><CalendarMenu /></SidebarAside>
+                <div className="flex min-h-0 min-w-0 flex-1 flex-col md:py-2 md:pr-2">
+                <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white md:rounded-2xl">
+                  <header className="flex min-h-16 w-full shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-neutral-200 py-2 pl-5 pr-3 text-sm max-md:pl-2">
+                    <MobileMenuButton />
+                    <h1 className="min-w-0 truncate text-lg font-semibold text-neutral-900">{pathname === "/calendar" ? t("calendar.calendar") : t("calendar.menu.bookingTypes")}</h1>
+                    <div id="calendar-header-slot" className="flex min-w-0 flex-1 items-center justify-end gap-2 max-md:order-last max-md:basis-full max-md:empty:hidden" />
+                    <div className="ml-auto flex shrink-0 items-center gap-2">
+                      <LicenseIndicator />
+                      {assistantEnabled && <Button type="button" variant="ghost" size="sm" className={assistantOpen ? "bg-blue-50 text-blue-700" : "text-neutral-600"} onClick={() => { setAssistantOpen((current) => !current); setAssistantFullSize(false); }} aria-label={assistantOpen ? t("agent.assistant.close") : t("agent.assistant.open")} aria-expanded={assistantOpen} aria-controls="email-assistant-panel"><Sparkles className="h-5 w-5" /></Button>}
+                      <MailboxSelector />
                     </div>
-                    <LicenseIndicator />
-                    {assistantEnabled && <Button type="button" variant="ghost" size="sm" className={assistantOpen ? "bg-blue-50 text-blue-700" : "text-neutral-600"} onClick={() => { setAssistantOpen((current) => !current); setAssistantFullSize(false); }} aria-label={assistantOpen ? t("agent.assistant.close") : t("agent.assistant.open")} aria-expanded={assistantOpen} aria-controls="email-assistant-panel"><Sparkles className="h-5 w-5" /></Button>}
-                    <MailboxSelector />
                   </header>
                   <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
                     <AssistantOpenContext.Provider value={assistantVisible}>
-                      <main id="main-content" tabIndex={-1} className="focus:outline-none min-h-0 min-w-0 flex-1 overflow-hidden bg-[#f6f8fc] overscroll-contain scrollbar-gutter-stable" aria-hidden={assistantVisible && assistantFullSize} inert={assistantVisible && assistantFullSize}>
+                      <main id="main-content" tabIndex={-1} className="focus:outline-none min-h-0 min-w-0 flex-1 overflow-hidden overscroll-contain scrollbar-gutter-stable" aria-hidden={assistantVisible && assistantFullSize} inert={assistantVisible && assistantFullSize}>
                         <div key={pathname} className="page-transition-enter h-full min-h-0">{children}</div>
                       </main>
                     </AssistantOpenContext.Provider>
@@ -79,6 +71,7 @@ export default function CalendarLayout({ children }: { children: React.ReactNode
                       {assistantEnabled && <AgentPanel open={assistantVisible} fullSize={assistantFullSize} onToggleFullSize={() => setAssistantFullSize((current) => !current)} onClose={() => { setAssistantOpen(false); setAssistantFullSize(false); }} />}
                     </aside>
                   </div>
+                </div>
                 </div>
                 <FloatingComposer />
               </div>

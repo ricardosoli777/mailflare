@@ -2999,5 +2999,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\nતો પણ {host} બળજબરીથી દૂર કરવું છે? MailLead પહેલાં તેના _mta-sts અને _smtp._tls DNS રેકોર્ડ દૂર કરવાનો પ્રયાસ કરશે, પછી ડોમેન, તેના બધા મેઇલબોક્સ અને તેમના બધા સંદેશા કાઢી નાખશે, ભલે રેકોર્ડ દૂર કરવામાં નિષ્ફળતા મળે. મેઇલ સર્વર થોડા સમય માટે કેશ થયેલી MTA-STS નીતિ લાગુ કરતા રહી શકે છે. પછી તમને હાથથી દૂર કરવાના DNS રેકોર્ડની યાદી મળશે.\n\nપુષ્ટિ કરવા માટે {host} લખો.",
 	"domains.forceRemoved": "{host} દૂર કરાયું",
 	"domains.forceRemovedRecords": "આ DNS રેકોર્ડ તમે જાતે દૂર કરો:",
-	"domains.forceRemovedCache": "મેઇલ સર્વર {date} સુધી જૂની MTA-STS નીતિ લાગુ કરતા રહી શકે છે."
+	"domains.forceRemovedCache": "મેઇલ સર્વર {date} સુધી જૂની MTA-STS નીતિ લાગુ કરતા રહી શકે છે.",
+	"calendar.menu.scheduling": "Scheduling",
+	"calendar.menu.tools": "Booking tools",
+	"calendar.menu.bookingTypes": "Booking types",
+	"calendar.menu.bookingPage": "Booking page",
+	"booking.types.new": "New booking type",
+	"booking.types.search": "Search booking types",
+	"booking.types.all": "All",
+	"booking.types.active": "Active",
+	"booking.types.inactive": "Inactive",
+	"booking.types.enabled": "Active",
+	"booking.types.share": "Share",
+	"booking.types.duplicate": "Duplicate",
+	"booking.types.copyName": "{name} (copy)",
+	"booking.types.noMatch": "No booking types here."
 }

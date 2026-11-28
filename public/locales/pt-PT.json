@@ -3020,5 +3020,19 @@
 	"domains.forceRemoveConfirm": "{reason}\n\nRemover {host} à força mesmo assim? O MailLead vai tentar remover os registos DNS _mta-sts e _smtp._tls e depois eliminar o domínio, todas as caixas de correio e todas as respetivas mensagens, mesmo que a remoção dos registos falhe. Os servidores de correio podem continuar a aplicar durante algum tempo a política MTA-STS em cache. Depois receberá a lista de registos DNS a remover manualmente.\n\nIntroduza {host} para confirmar.",
 	"domains.forceRemoved": "{host} removido",
 	"domains.forceRemovedRecords": "Remova estes registos DNS por si:",
-	"domains.forceRemovedCache": "Os servidores de correio podem continuar a aplicar a política MTA-STS antiga até {date}."
+	"domains.forceRemovedCache": "Os servidores de correio podem continuar a aplicar a política MTA-STS antiga até {date}.",
+	"calendar.menu.scheduling": "Agenda",
+	"calendar.menu.tools": "Ferramentas",
+	"calendar.menu.bookingTypes": "Tipos de reunião",
+	"calendar.menu.bookingPage": "Página de agendamento",
+	"booking.types.new": "Novo tipo de reunião",
+	"booking.types.search": "Buscar tipos de reunião",
+	"booking.types.all": "Todos",
+	"booking.types.active": "Ativos",
+	"booking.types.inactive": "Inativos",
+	"booking.types.enabled": "Ativo",
+	"booking.types.share": "Compartilhar",
+	"booking.types.duplicate": "Duplicar",
+	"booking.types.copyName": "{name} (cópia)",
+	"booking.types.noMatch": "Nenhum tipo de reunião aqui."
 }

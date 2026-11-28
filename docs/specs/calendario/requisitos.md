@@ -5,7 +5,7 @@ Estado: proposto em 2026-11-28, ajustado com as respostas do dono no mesmo dia; 
 
 ## Objetivo
 
-Trazer para a seção **Calendário** do MailLead um sistema de agendamento completo, no nível das melhores ferramentas do mercado, já ligado ao e-mail e ao Marketing do próprio app. Visual próprio do MailLead: usamos as ideias, não copiamos telas, textos ou marca de terceiros.
+Trazer para a seção **Calendário** do MailLead um sistema de agendamento completo, no nível das melhores ferramentas do mercado, já ligado ao e-mail e ao Marketing do próprio app. Telas: a seção Calendário segue, em cada detalhe, as capturas de referência que o dono guarda fora do repositório (menu lateral, cabeçalhos, cartões, calendário, página pública e editor em painel). Textos próprios; nenhuma marca, nome ou arquivo de terceiros aparece no app ou no repositório. O restante do app não muda.
 
 ## Princípios
 
@@ -75,7 +75,7 @@ Formato: **QUANDO** acontece algo, **O SISTEMA DEVE** fazer algo. "Aceite" é co
 
 ### R9. Ligação com o Marketing
 - R9.1 Toda reserva gera um **cliente** no calendário com histórico.
-- R9.2 Ao enviar o formulário de agendamento, gratuito ou pago, a pessoa vira contato do Marketing e entra nas campanhas, na lista e nas etiquetas escolhidas no tipo. Isso vale mesmo que o pagamento não seja concluído; as etiquetas separam `agendou-gratis`, `agendou-pago` e `pagamento-pendente`.
+- R9.2 Ao enviar o formulário de agendamento, gratuito ou pago, a pessoa vira contato do Marketing e entra nas campanhas, na lista e nas etiquetas escolhidas no tipo. Isso vale mesmo que o pagamento não seja concluído; as etiquetas separam `agendou-gratis`, `agendou-pago` e `pagamento-pendente`. Quando o pagamento é confirmado, `pagamento-pendente` sai e `agendou-pago` entra.
 - R9.5 Acima do botão de envio fica o aviso de que a pessoa receberá e-mails (texto editável, nunca vazio). Guardamos o texto, a origem e a data como prova.
 - R9.6 Quem se descadastrou ou está na lista de bloqueio **não** volta a receber campanhas só por agendar de novo. Confirmação e lembretes da reunião continuam saindo.
 - R9.3 Eventos de reserva (criada, cancelada, remarcada, paga, ausente, concluída) podem iniciar fluxos.
