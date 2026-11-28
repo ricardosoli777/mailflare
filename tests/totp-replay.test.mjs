@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { loadApp } from "./helpers/real-db.mjs";
 
@@ -82,6 +83,7 @@ test("no route verifies a TOTP code without recording its step", () => {
 			else if (/\.tsx?$/.test(name) && /\b(verifyTotp|matchTotpStep)\(/.test(readFileSync(path, "utf8"))) hits.push(path);
 		}
 	};
-	walk(new URL("../src", import.meta.url).pathname);
-	assert.deepEqual(hits.map((p) => p.split("/src/")[1]), ["lib/auth/mfa.ts", "lib/auth/totp.ts"]);
+	const src = fileURLToPath(new URL("../src", import.meta.url));
+	walk(src);
+	assert.deepEqual(hits.map((p) => relative(src, p).split(sep).join("/")).sort(), ["lib/auth/mfa.ts", "lib/auth/totp.ts"]);
 });

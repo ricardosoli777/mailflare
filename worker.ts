@@ -9,6 +9,7 @@ import {
 } from "./src/lib/email/inbound";
 import { processOutboundQueue, type OutboundQueueMessage } from "./src/lib/email/send";
 import {
+	httpsRedirectTarget,
 	isImportJobMessage,
 	isInboundQueueMessage,
 	isWebhookRetryMessage,
@@ -55,6 +56,8 @@ export default {
 	async fetch(request: Request, rawEnv: CloudflareEnv, ctx: ExecutionContext) {
 		// An mta-sts.<domain> host serves the policy file and nothing else of the app.
 		const requestUrl = new URL(request.url);
+		const secureUrl = httpsRedirectTarget(requestUrl);
+		if (secureUrl) return Response.redirect(secureUrl, 308);
 		const blocked = guardMtaStsHost({ hostname: requestUrl.hostname, pathname: requestUrl.pathname, method: request.method });
 		if (blocked) return blocked;
 		// CalDAV/CardDAV use methods Next route handlers cannot express (PROPFIND, REPORT). They skip the D1 read

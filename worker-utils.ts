@@ -138,3 +138,10 @@ export function settleFailedInboundMessage(msg: { retry(options: { delaySeconds:
 	if (isMissingColumnError(error) || isMissingTableError(error)) msg.retry({ delaySeconds: INBOUND_SCHEMA_RETRY_DELAY_SECONDS });
 	else msg.retry({ delaySeconds: 10 });
 }
+
+/** Where a plain-HTTP request on a public host should go instead; null for HTTPS and local development. */
+export function httpsRedirectTarget(url: URL): string | null {
+	if (url.protocol !== "http:") return null;
+	if (/^(localhost|127(\.\d+){3}|\[::1\])$|\.(localhost|test)$/.test(url.hostname)) return null;
+	return `https://${url.host}${url.pathname}${url.search}`;
+}

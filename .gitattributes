@@ -2,3 +2,7 @@
 drizzle/migrations/meta/*_snapshot.json linguist-generated=true
 drizzle/migrations-pg/meta/*_snapshot.json linguist-generated=true
 drizzle/migrations-mysql/meta/*_snapshot.json linguist-generated=true
+
+# Tests match fixtures line by line and the migration bundle embeds SQL verbatim: keep LF on Windows.
+tests/fixtures/** text eol=lf
+drizzle*/**/*.sql text eol=lf

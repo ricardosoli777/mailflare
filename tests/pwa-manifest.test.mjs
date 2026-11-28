@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test, { after } from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -20,7 +20,7 @@ async function loadManifest() {
 		outfile,
 		logLevel: "silent",
 	});
-	return (await import(outfile)).default();
+	return (await import(pathToFileURL(outfile).href)).default();
 }
 
 test("manifest has a maskable icon entry that exists in public/", async () => {
