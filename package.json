@@ -95,7 +95,7 @@
     "dayjs": "^1.11.20",
     "dompurify": "^3.4.17",
     "drizzle-orm": "^0.45.2",
-    "mailauth": "^4.13.3",
+    "mailauth": "^8.1.0",
     "mimetext": "^3.0.28",
     "mysql2": "^3.24.6",
     "nanoid": "^5.1.16",
@@ -153,15 +153,15 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5.7.4",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
-    "vite-plus": "1.0.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.6.0",
+    "vite-plus": "1.6.0",
     "wrangler": "^4.127.1"
   },
   "overrides": {
     "@esbuild-kit/core-utils": {
       "esbuild": "^0.25.4"
     },
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.6.0"
   },
   "type": "module",
   "optionalDependencies": {

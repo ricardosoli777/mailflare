@@ -46,7 +46,7 @@ function withDedupedStreams(binding: Ai): Ai {
 		get(target, prop, receiver) {
 			if (prop !== "run") return Reflect.get(target, prop, receiver);
 			return async (...args: unknown[]) => {
-				const result = await (target.run as (...runArgs: unknown[]) => Promise<unknown>).apply(target, args);
+				const result = await (target.run as (...runArgs: unknown[]) => Promise<unknown>).call(target, ...args);
 				return result instanceof ReadableStream ? dedupeWorkersAIStream(result) : result;
 			};
 		},

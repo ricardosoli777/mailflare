@@ -172,7 +172,7 @@ export function ContactManager() {
 						</select>
 					</div>
 					<ConsentFields value={personConsent} onChange={setPersonConsent} />
-					<p className="text-xs text-neutral-500">Sem origem e texto, o contato é salvo como "sem consentimento" e não recebe campanhas.</p>
+					<p className="text-xs text-neutral-500">Sem origem e texto, o contato é salvo como “sem consentimento” e não recebe campanhas.</p>
 					<Button type="button" disabled={busy || !person.email.trim()} onClick={() => void addPerson()}>Salvar contato</Button>
 				</div>
 			</details>
@@ -180,7 +180,7 @@ export function ContactManager() {
 			<details className="rounded-3xl bg-white p-6">
 				<summary className="cursor-pointer text-sm font-medium text-neutral-900">Importar arquivo CSV</summary>
 				<div className="mt-3 space-y-3">
-					<p className="text-xs text-neutral-500">A primeira linha precisa ter a coluna "email". A coluna "nome" é opcional; as demais viram campos do contato.</p>
+					<p className="text-xs text-neutral-500">A primeira linha precisa ter a coluna “email”. A coluna “nome” é opcional; as demais viram campos do contato.</p>
 					<div className="flex flex-wrap items-center gap-2">
 						<input type="file" accept=".csv,text/csv" aria-label="Arquivo CSV" className="text-sm" onChange={(event) => setFile(event.target.files?.[0] ?? null)} />
 						<select aria-label="Lista de destino" className={SELECT} value={importList} onChange={(event) => setImportList(event.target.value)}>
@@ -259,7 +259,7 @@ export function ContactManager() {
 									<div className="text-xs text-neutral-600">
 										<p className="font-medium">Consentimento</p>
 										{detail.consents.length === 0 && <p>Nenhum registrado.</p>}
-										{detail.consents.map((consent, index) => <p key={index}>{day(consent.consentedAt)} · {consent.source}: "{consent.text}"</p>)}
+										{detail.consents.map((consent, index) => <p key={index}>{day(consent.consentedAt)} · {consent.source}: “{consent.text}”</p>)}
 										<p className="mt-2 font-medium">Histórico</p>
 										{detail.events.map((event, index) => <p key={index}>{new Date(event.createdAt).toLocaleString("pt-BR")} · {event.type} {event.detail}</p>)}
 									</div>

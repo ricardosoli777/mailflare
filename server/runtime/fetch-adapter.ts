@@ -38,6 +38,34 @@ function lazyBody(incoming: IncomingMessage): ReadableStream<Uint8Array> {
 	);
 }
 
+const DISCARD_BYTES = 8 * 1024 * 1024;
+const DISCARD_MS = 2000;
+
+/**
+ * Throw away what is left of a body nobody read, within a size and time limit.
+ * Closing a socket that still holds unread bytes resets it (always on Windows),
+ * and the client would get a connection error instead of the answer.
+ */
+function discardRest(incoming: IncomingMessage): Promise<void> {
+	return new Promise((resolve) => {
+		let bytes = 0;
+		const done = () => {
+			clearTimeout(timer);
+			incoming.off("data", count).off("end", done).off("error", done).off("close", done);
+			resolve();
+		};
+		const count = (chunk: Buffer) => {
+			bytes += chunk.length;
+			if (bytes <= DISCARD_BYTES) return;
+			incoming.pause();
+			done();
+		};
+		const timer = setTimeout(done, DISCARD_MS);
+		incoming.on("data", count).on("end", done).on("error", done).on("close", done);
+		incoming.resume();
+	});
+}
+
 /**
  * Run a framework-free fetch handler (like `handleDavRequest`) behind the Node
  * server. The URL is origin + the raw request target as a string, so a target
@@ -73,7 +101,11 @@ export async function serveFetch(handler: FetchHandler, incoming: IncomingMessag
 		const cookies = response.headers.getSetCookie();
 		if (cookies.length) outHeaders["set-cookie"] = cookies;
 		// Request bytes still on the wire cannot be skipped on a kept-alive connection: close it once the answer is out.
-		if (!incoming.complete) outHeaders.connection = "close";
+		if (!incoming.complete) {
+			outHeaders.connection = "close";
+			// A body the handler started reading belongs to its stream; leave it alone.
+			if (!incoming.readableDidRead) await discardRest(incoming);
+		}
 		outgoing.writeHead(response.status, outHeaders);
 		if (!response.body || method === "HEAD") {
 			outgoing.end();
