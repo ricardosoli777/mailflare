@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { LanguageProvider } from "@/components/language-provider";
 import { FALLBACK_LOCALE, getDirection } from "@/lib/i18n/utils";
@@ -9,9 +9,15 @@ import { themeBootstrapScript } from "@/components/theme-utils";
 import { getHomeBranding } from "./home-server-utils";
 import "./globals.css";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
+// Text and headings. vinext downloads them at build time and serves them from the app, as the CSP requires.
+const textFont = Inter({
+	variable: "--font-app-sans",
+	subsets: ["latin", "latin-ext"],
+});
+
+const headingFont = Plus_Jakarta_Sans({
+	variable: "--font-app-heading",
+	subsets: ["latin", "latin-ext"],
 });
 
 const geistMono = Geist_Mono({
@@ -69,7 +75,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 				<script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
 				<link rel="icon" href="/api/branding/icon?v=maillead"></link>
 			</head>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+			<body className={`${textFont.variable} ${headingFont.variable} ${geistMono.variable} antialiased`}>
 				<LanguageProvider initialLocale={locale} initialMessages={messages}><Providers initialBranding={branding}>{children}</Providers></LanguageProvider>
 			</body>
 		</html>

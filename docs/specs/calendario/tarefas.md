@@ -29,7 +29,7 @@ Se a mesma tarefa falhar três voltas no ciclo, parar e levar o problema ao dono
 ### Onda 1: base (R1, P1, P2)
 - [x] 1.1 `pt-BR` como idioma padrão, com inglês como reserva
 - [x] 1.2 Textos fixos em inglês do calendário, da página pública e dos e-mails de reunião traduzidos (faltam mensagens de erro de algumas APIs internas)
-- [ ] 1.3 Fontes novas no app e nas páginas públicas (amostra antes)
+- [x] 1.3 Fontes novas no app e nas páginas públicas: Plus Jakarta Sans nos títulos, Inter no texto (escolha do dono). E-mails seguem com fonte padrão dos leitores de e-mail
 - [ ] 1.4 Menu da seção Calendário: hoje só há duas seções prontas; passa para a onda 2, junto das telas novas
 - [x] 1.5 Vários anfitriões sem exigir licença (só administrador; limite técnico de 20 por reunião)
 
