@@ -19,12 +19,13 @@ export type Check = { id: string; label: string; ok: boolean; detail: string };
 const api = (config: AwsConfig, path: string) => ({ config, service: "ses", host: `email.${config.region}.amazonaws.com`, path });
 
 export async function getQuota(config: AwsConfig): Promise<Quota> {
-	const account = await awsJson<{ SendingEnabled?: boolean; SendQuota?: { Max24HourSend?: number; MaxSendRate?: number; SentLast24Hours?: number } }>(api(config, "/v2/email/account"));
+	const account = await awsJson<{ SendingEnabled?: boolean; EnforcementStatus?: string; SendQuota?: { Max24HourSend?: number; MaxSendRate?: number; SentLast24Hours?: number } }>(api(config, "/v2/email/account"));
 	return {
 		max24Hour: account.SendQuota?.Max24HourSend ?? 0,
 		maxPerSecond: account.SendQuota?.MaxSendRate ?? 1,
 		sentLast24Hours: account.SendQuota?.SentLast24Hours ?? 0,
 		sendingEnabled: account.SendingEnabled !== false,
+		enforcement: account.EnforcementStatus,
 	};
 }
 

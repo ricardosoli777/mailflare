@@ -10,7 +10,7 @@ export type SenderSettings = {
 	hourlyByProvider: Record<Provider, number>;
 };
 
-export type Quota = { max24Hour: number; maxPerSecond: number; sentLast24Hours: number; sendingEnabled: boolean };
+export type Quota = { max24Hour: number; maxPerSecond: number; sentLast24Hours: number; sendingEnabled: boolean; enforcement?: string };
 
 export type BreakerStats = { sent: number; bounced: number; complained: number };
 

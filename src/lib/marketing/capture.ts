@@ -2,7 +2,7 @@
 import { newId } from "@/lib/ids";
 import type { CaptureForm, CaptureHook, CaptureKey, FormField, SubmitResult } from "./capture-types";
 import { importContacts, unsubscribeAll } from "./contacts";
-import { cleanFields, emailHash, isValidEmail, normalizeEmail, normalizeTags } from "./contacts-utils";
+import { cleanFields, emailHash, isValidEmail, normalizeEmail, normalizeTags, isRoleAddress } from "./contacts-utils";
 import { readPhone } from "./whatsapp";
 
 const HOUR = 60 * 60 * 1000;
@@ -165,6 +165,7 @@ export async function submitForm(
 	const email = normalizeEmail(input.email);
 	const name = input.name.trim().slice(0, 120);
 	if (!isValidEmail(email)) return { ok: false, error: "Confira o e-mail digitado." };
+	if (isRoleAddress(email)) return { ok: false, error: "Use um e-mail pessoal ou de contato." };
 	if (deps.checkDomain && (await deps.checkDomain(email.slice(email.lastIndexOf("@") + 1)))) return { ok: false, error: "Não foi possível confirmar o domínio deste e-mail." };
 	const wantsWhatsApp = !!form.whatsappText && input.whatsapp !== undefined;
 	const phone = wantsWhatsApp ? readPhone(input.whatsapp) : null;

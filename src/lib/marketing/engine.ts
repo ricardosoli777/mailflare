@@ -94,6 +94,8 @@ export async function runEngine(db: D1Database, deps: EngineDeps, batchSize = BA
 		if (refused) return stop(refused);
 		const quota = await deps.quota();
 		if (!quota.sendingEnabled) return stop("O envio está desativado na conta do Amazon SES.");
+		// SendingEnabled does not change on an AWS review or pause; EnforcementStatus does.
+		if (quota.enforcement && quota.enforcement !== "HEALTHY") return stop(`A conta do Amazon SES está em revisão ou pausada pela AWS (${quota.enforcement}). Abra o painel do SES antes de enviar.`);
 		const warmup = await warmupState(db, now());
 		let allowance = Math.min(batchSize, warmup.limit - warmup.sentLast24Hours, quota.max24Hour - quota.sentLast24Hours);
 		if (allowance <= 0) return stop("Limite diário atingido; o restante sai depois.");

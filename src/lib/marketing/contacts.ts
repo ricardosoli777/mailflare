@@ -3,7 +3,7 @@
  * never become marketing contacts on their own (C5).
  */
 import { newId } from "@/lib/ids";
-import { domainOf, emailHash, isValidEmail, normalizeEmail } from "./contacts-utils";
+import { domainOf, emailHash, isValidEmail, normalizeEmail, isRoleAddress, ROLE_ADDRESS_REASON } from "./contacts-utils";
 import type { Consent, ContactDetail, ContactStatus, ContactSummary, ImportReport, ImportRow, MailingList } from "./contacts-types";
 
 type ContactRow = { id: string; email: string; name: string; fields: string; created_at: number; reason: string | null; consents: number };
@@ -120,6 +120,7 @@ export async function importContacts(
 	for (const row of rows) {
 		const email = normalizeEmail(row.email);
 		if (!isValidEmail(email)) reject(row, "e-mail inválido");
+		else if (isRoleAddress(email)) reject(row, ROLE_ADDRESS_REASON);
 		else if (seen.has(email)) reject(row, "repetido no arquivo");
 		else {
 			seen.add(email);

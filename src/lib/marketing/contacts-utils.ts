@@ -19,6 +19,11 @@ export function isValidEmail(email: string): boolean {
 	return email.length <= 254 && email.indexOf("@") <= 64 && EMAIL.test(email);
 }
 
+/** Role mailboxes watched by providers and anti-spam teams; AWS says never to mail them. */
+const ROLE_ADDRESSES = new Set(["abuse", "postmaster", "noc", "spam", "mailer-daemon", "noreply", "no-reply"]);
+export const isRoleAddress = (email: string) => ROLE_ADDRESSES.has(email.slice(0, email.indexOf("@")).split("+")[0]);
+export const ROLE_ADDRESS_REASON = "endereço de função (abuse@, postmaster@ e semelhantes) não recebe marketing";
+
 export const domainOf = (email: string) => email.slice(email.lastIndexOf("@") + 1);
 
 export async function emailHash(email: string): Promise<string> {

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { appSettings } from "@/db/schema";
 import type { AwsConfig, AwsConfigStatus } from "@/lib/aws/aws-types";
+import { isSealed, open, seal } from "@/lib/aws/secret-box";
 
 /** Regions where SES can receive mail (SES inbound is not offered everywhere). */
 export const SES_RECEIVING_REGIONS = [
@@ -20,7 +21,15 @@ type StoredAws = { accessKeyId?: string; secretAccessKey?: string; region?: stri
 async function readStored(env: CloudflareEnv): Promise<StoredAws | null> {
 	const [row] = await getDb(env).select({ awsConfig: appSettings.awsConfig }).from(appSettings).where(eq(appSettings.id, "default")).limit(1);
 	if (!row?.awsConfig) return null;
-	try { return JSON.parse(row.awsConfig) as StoredAws; } catch { return null; }
+	const key = env.CONFIG_ENCRYPTION_KEY?.trim();
+	const sealed = isSealed(row.awsConfig);
+	const plain = sealed ? await open(row.awsConfig, key) : row.awsConfig;
+	if (!plain) return null;
+	let stored: StoredAws;
+	try { stored = JSON.parse(plain) as StoredAws; } catch { return null; }
+	// Credentials saved before the key existed are sealed the first time they are read.
+	if (!sealed && key) await getDb(env).update(appSettings).set({ awsConfig: await seal(plain, key) }).where(eq(appSettings.id, "default"));
+	return stored;
 }
 
 /** The saved AWS credentials, falling back to AWS_* environment variables. */
@@ -56,7 +65,9 @@ export async function getAwsConfigStatus(env: CloudflareEnv): Promise<AwsConfigS
 }
 
 export async function saveAwsConfig(env: CloudflareEnv, config: AwsConfig, accountId: string): Promise<void> {
-	const values = { awsConfig: JSON.stringify({ ...config, accountId }), updatedAt: new Date() };
+	const plain = JSON.stringify({ ...config, accountId });
+	const key = env.CONFIG_ENCRYPTION_KEY?.trim();
+	const values = { awsConfig: key ? await seal(plain, key) : plain, updatedAt: new Date() };
 	await getDb(env).insert(appSettings).values({ id: "default", ...values }).onConflictDoUpdate({ target: appSettings.id, set: values });
 }
 

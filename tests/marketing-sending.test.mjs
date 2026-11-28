@@ -106,6 +106,13 @@ test("U3: unsubscribing while queued stops the message", async () => {
 	assert.deepEqual(statuses(), { sent: 2, skipped: 1 });
 });
 
+test("an AWS review or pause stops the engine", async () => {
+	const { db, sent, deps } = await setup(1);
+	const run = await engine.runEngine(db, { ...deps, quota: async () => ({ ...quota, enforcement: "PROBATION" }) });
+	assert.match(run.blocked, /PROBATION/);
+	assert.equal(sent.length, 0);
+});
+
 test("R4/R3: warm-up and the AWS quota cap the day", async () => {
 	const first = await setup(80);
 	await engine.runEngine(first.db, first.deps, 200);
